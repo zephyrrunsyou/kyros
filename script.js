@@ -112,7 +112,7 @@ const DATA = {
       name: "semetary",
       url: "https://semetary.xyz",
       years: "2026",
-      metric: "20,8k",
+      metric: "20.8k",
       metricLabel: "Users",
       image: "images/semetary.png",
       hue: 330,
