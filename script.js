@@ -119,7 +119,7 @@ const DATA = {
       description: "Semetary is a feature-rich Discord bot built to help communities of all sizes with moderation, automation, music, utilities, and powerful server management tools.",
       stats: [
         { value: "16", label: "servers" },
-        { value: "20,8k", label: "Users" },
+        { value: "20.8k", label: "Users" },
       ],
       moreStats: [
         { value: "2", label: "shards" },
