@@ -1,30 +1,18 @@
-/* ==========================================================================
-   Portfolio — app logic
-   Edit the DATA object below to make this site yours.
-   ========================================================================== */
-
-/* --------------------------------------------------------------------------
-   DATA — everything you need to change lives here.
-   Point `avatar`, `art`, `image` and `cover` at files inside /images.
-   Any image that is missing simply falls back to a coloured gradient.
-   -------------------------------------------------------------------------- */
 const DATA = {
-  title: "portfolio",
-
   profile: {
     name: "your name",
     handle: "@yourhandle",
     bio: "I'm a self-taught developer who enjoys making discord bots, websites, and other projects in my free time. coding is just a hobby of mine, but i enjoy learning new things and bringing my ideas to life.",
-    avatar: "", // filled live from Discord (Lanyard)
+    avatar: "",
     hue: 265,
-    status: "offline", // online | idle | dnd | offline — overridden by Discord
+    status: "offline",
   },
 
   nowPlaying: {
     title: "interlude",
     artist: "some artist",
     url: "#",
-    art: "", // filled live from Last.fm
+    art: "",
     hue: 250,
     statusText: "last played · 12m ago",
     playing: false,
@@ -139,49 +127,13 @@ const DATA = {
 
   contact: {
     subtitle: "have something to build? my inbox is open",
-    email: "adam@kyron.dev",
-    links: [
-      { id: "github", name: "GitHub", handle: "@relateful", href: "https://github.com/relateful", glyph: "github" },
-      { id: "x", name: "X", handle: "@adamz_mercy", href: "https://x.com/adamz_mercy", glyph: "x" },
-      { id: "discord", name: "Discord", handle: "@b5c8", glyph: "discord" },
-    ],
-  },
-
-  modals: {
-    setup: {
-      title: "setup",
-      subtitle: "the gear & apps i use every day",
-      groups: [
-        {
-          heading: "hardware",
-          items: [
-            { k: "laptop", v: "MacBook Pro 14\"" },
-            { k: "keyboard", v: "Keychron Q1" },
-            { k: "mouse", v: "Logitech MX Master" },
-            { k: "monitor", v: "27\" 4K" },
-          ],
-        },
-        {
-          heading: "software",
-          items: [
-            { k: "editor", v: "VS Code" },
-            { k: "terminal", v: "Warp" },
-            { k: "browser", v: "Arc" },
-          ],
-        },
-      ],
-    },
+    discord: "@b5c8",
+    github: { handle: "@zephyrrunsyou", href: "https://github.com/zephyrrunsyou" },
   },
 };
 
-/* --------------------------------------------------------------------------
-   Live integrations — Discord presence (Lanyard) + Last.fm.
-   Only public, read-only values live in the browser: the Last.fm api key is
-   fine to expose, but never put the account's shared secret here.
-   -------------------------------------------------------------------------- */
 const CONFIG = {
   discord: {
-    // Change this to your own Discord user id (must be in the Lanyard server).
     id: "194416051348439040",
     api: "https://api.lanyard.rest/v1/users",
     ws: "wss://api.lanyard.rest/socket",
@@ -194,9 +146,6 @@ const CONFIG = {
   },
 };
 
-/* --------------------------------------------------------------------------
-   Icons (Phosphor + Simple Icons paths) — no external requests.
-   -------------------------------------------------------------------------- */
 const BRAND = {
   react: "M14.23 12.004a2.236 2.236 0 0 1-2.235 2.236 2.236 2.236 0 0 1-2.236-2.236 2.236 2.236 0 0 1 2.235-2.236 2.236 2.236 0 0 1 2.236 2.236zm2.648-10.69c-1.346 0-3.107.96-4.888 2.622-1.78-1.653-3.542-2.602-4.887-2.602-.41 0-.783.093-1.106.278-1.375.793-1.683 3.264-.973 6.365C1.98 8.917 0 10.42 0 12.004c0 1.59 1.99 3.097 5.043 4.03-.704 3.113-.39 5.588.988 6.38.32.187.69.275 1.102.275 1.345 0 3.107-.96 4.888-2.624 1.78 1.654 3.542 2.603 4.887 2.603.41 0 .783-.09 1.106-.275 1.374-.792 1.683-3.263.973-6.365C22.02 15.096 24 13.59 24 12.004c0-1.59-1.99-3.097-5.043-4.032.704-3.11.39-5.587-.988-6.38-.318-.184-.688-.277-1.092-.278zm-.005 1.09v.006c.225 0 .406.044.558.127.666.382.955 1.835.73 3.704-.054.46-.142.945-.25 1.44-.96-.236-2.006-.417-3.107-.534-.66-.905-1.345-1.727-2.035-2.447 1.592-1.48 3.087-2.292 4.105-2.295zm-9.77.02c1.012 0 2.514.808 4.11 2.28-.686.72-1.37 1.537-2.02 2.442-1.107.117-2.154.298-3.113.538-.112-.49-.195-.964-.254-1.42-.23-1.868.054-3.32.714-3.707.19-.09.4-.127.563-.132zm4.882 3.05c.455.468.91.992 1.36 1.564-.44-.02-.89-.034-1.345-.034-.46 0-.915.01-1.36.034.44-.572.895-1.096 1.345-1.565zM12 8.1c.74 0 1.477.034 2.202.093.406.582.802 1.203 1.183 1.86.372.64.71 1.29 1.018 1.946-.308.655-.646 1.31-1.013 1.95-.38.66-.773 1.288-1.18 1.87-.728.063-1.466.098-2.21.098-.74 0-1.477-.035-2.202-.093-.406-.582-.802-1.204-1.183-1.86-.372-.64-.71-1.29-1.018-1.946.303-.657.646-1.313 1.013-1.954.38-.66.773-1.286 1.18-1.868.728-.064 1.466-.098 2.21-.098zm-3.635.254c-.24.377-.48.763-.704 1.16-.225.39-.435.782-.635 1.174-.265-.656-.49-1.31-.676-1.947.64-.15 1.315-.283 2.015-.386zm7.26 0c.695.103 1.365.23 2.006.387-.18.632-.405 1.282-.66 1.933-.2-.39-.41-.783-.64-1.174-.225-.392-.465-.774-.705-1.146zm3.063.675c.484.15.944.317 1.375.498 1.732.74 2.852 1.708 2.852 2.476-.005.768-1.125 1.74-2.857 2.475-.42.18-.88.342-1.355.493-.28-.958-.646-1.956-1.1-2.98.45-1.017.81-2.01 1.085-2.964zm-13.395.004c.278.96.645 1.957 1.1 2.98-.45 1.017-.812 2.01-1.086 2.964-.484-.15-.944-.318-1.37-.5-1.732-.737-2.852-1.706-2.852-2.474 0-.768 1.12-1.742 2.852-2.476.42-.18.88-.342 1.356-.494zm11.678 4.28c.265.657.49 1.312.676 1.948-.64.157-1.316.29-2.016.39.24-.375.48-.762.705-1.158.225-.39.435-.788.636-1.18zm-9.945.02c.2.392.41.783.64 1.175.23.39.465.772.705 1.143-.695-.102-1.365-.23-2.006-.386.18-.63.406-1.282.66-1.933zM17.92 16.32c.112.493.2.968.254 1.423.23 1.868-.054 3.32-.714 3.708-.147.09-.338.128-.563.128-1.012 0-2.514-.807-4.11-2.28.686-.72 1.37-1.536 2.02-2.44 1.107-.118 2.154-.3 3.113-.54zm-11.83.01c.96.234 2.006.415 3.107.532.66.905 1.345 1.727 2.035 2.446-1.595 1.483-3.092 2.295-4.11 2.295-.22-.005-.406-.05-.553-.132-.666-.38-.955-1.834-.73-3.703.054-.46.142-.944.25-1.438zm4.56.64c.44.02.89.034 1.345.034.46 0 .915-.01 1.36-.034-.44.572-.895 1.095-1.345 1.565-.455-.47-.91-.993-1.36-1.565z",
   tailwind: "M12.001,4.8c-3.2,0-5.2,1.6-6,4.8c1.2-1.6,2.6-2.2,4.2-1.8c0.913,0.228,1.565,0.89,2.288,1.624 C13.666,10.618,15.027,12,18.001,12c3.2,0,5.2-1.6,6-4.8c-1.2,1.6-2.6,2.2-4.2,1.8c-0.913-0.228-1.565-0.89-2.288-1.624 C16.337,6.182,14.976,4.8,12.001,4.8z M6.001,12c-3.2,0-5.2,1.6-6,4.8c1.2-1.6,2.6-2.2,4.2-1.8c0.913,0.228,1.565,0.89,2.288,1.624 c1.177,1.194,2.538,2.576,5.512,2.576c3.2,0,5.2-1.6,6-4.8c-1.2,1.6-2.6,2.2-4.2,1.8c-0.913-0.228-1.565-0.89-2.288-1.624 C10.337,13.382,8.976,12,6.001,12z",
@@ -223,17 +172,14 @@ const ICONS = {
   keyboard: '<svg viewBox="0 0 256 256" aria-hidden="true"><path d="M120,76V188a4,4,0,0,1-4,4H96v16h15.73a8.18,8.18,0,0,1,8.25,7.47,8,8,0,0,1-8,8.53H64.27A8.18,8.18,0,0,1,56,216.53,8,8,0,0,1,64,208H80V192H32A24,24,0,0,1,8,168V96A24,24,0,0,1,32,72h84A4,4,0,0,1,120,76ZM248,48V208a16,16,0,0,1-16,16H152a16,16,0,0,1-16-16V48a16,16,0,0,1,16-16h80A16,16,0,0,1,248,48ZM203.9,181.57a12,12,0,1,0-10.34,10.33A12,12,0,0,0,203.9,181.57ZM224,103.47A8.18,8.18,0,0,0,215.73,96H168.27a8.18,8.18,0,0,0-8.25,7.47,8,8,0,0,0,8,8.53h48A8,8,0,0,0,224,103.47Zm0-32A8.18,8.18,0,0,0,215.73,64H168.27A8.18,8.18,0,0,0,160,71.47,8,8,0,0,0,168,80h48A8,8,0,0,0,224,71.47Z"/></svg>',
   chat: '<svg viewBox="0 0 256 256" aria-hidden="true"><path d="M128,24A104,104,0,0,0,36.18,176.88L24.83,210.93a16,16,0,0,0,20.24,20.24l34.05-11.35A104,104,0,1,0,128,24ZM84,140a12,12,0,1,1,12-12A12,12,0,0,1,84,140Zm44,0a12,12,0,1,1,12-12A12,12,0,0,1,128,140Zm44,0a12,12,0,1,1,12-12A12,12,0,0,1,172,140Z"/></svg>',
   arrowLeft: '<svg viewBox="0 0 256 256" aria-hidden="true"><path d="M228,128a12,12,0,0,1-12,12H69l51.52,51.51a12,12,0,0,1-17,17l-72-72a12,12,0,0,1,0-17l72-72a12,12,0,0,1,17,17L69,116H216A12,12,0,0,1,228,128Z"/></svg>',
-  mail: '<svg viewBox="0 0 256 256" aria-hidden="true"><path d="M224,48H32a8,8,0,0,0-8,8V192a16,16,0,0,0,16,16H216a16,16,0,0,0,16-16V56A8,8,0,0,0,224,48Zm-8,144H40V74.19l82.59,75.71a8,8,0,0,0,10.82,0L216,74.19V192Z"/></svg>',
   copy: '<svg viewBox="0 0 256 256" aria-hidden="true"><path d="M184,64H40a8,8,0,0,0-8,8V216a8,8,0,0,0,8,8H184a8,8,0,0,0,8-8V72A8,8,0,0,0,184,64Zm-8,144H48V80H176ZM224,40V184a8,8,0,0,1-16,0V48H72a8,8,0,0,1,0-16H216A8,8,0,0,1,224,40Z"/></svg>',
   github: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/></svg>',
-  x: '<svg viewBox="0 0 512 512" aria-hidden="true"><path d="M389.2 48h70.6L305.6 224.2 487 464H345L233.7 318.6 106.5 464H35.8L200.7 275.5 26.8 48H172.4L272.9 180.9 389.2 48zM364.4 421.8h39.1L151.1 88h-42L364.4 421.8z"/></svg>',
 };
 
 const stroke = (inner) =>
   `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${inner}</svg>`;
 
 const PLAYER_ICONS = {
-  play: stroke('<polygon points="6 4 20 12 6 20 6 4" fill="currentColor" stroke="none"/>'),
   pause: stroke('<rect x="6" y="4" width="4" height="16" rx="1" fill="currentColor" stroke="none"/><rect x="14" y="4" width="4" height="16" rx="1" fill="currentColor" stroke="none"/>'),
   prev: stroke('<polygon points="19 20 9 12 19 4 19 20" fill="currentColor" stroke="none"/><line x1="5" y1="4" x2="5" y2="20"/>'),
   next: stroke('<polygon points="5 4 15 12 5 20 5 4" fill="currentColor" stroke="none"/><line x1="19" y1="4" x2="19" y2="20"/>'),
@@ -249,9 +195,6 @@ const STATUS = {
   offline: { color: "#80848e", label: "Offline" },
 };
 
-/* --------------------------------------------------------------------------
-   Helpers
-   -------------------------------------------------------------------------- */
 const esc = (s) =>
   String(s == null ? "" : s).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
 
@@ -267,7 +210,6 @@ function statusIcon(key) {
   return `<svg viewBox="0 0 1 1" role="img" aria-label="${s.label}"><title>${s.label}</title><defs><mask id="${id}" maskContentUnits="objectBoundingBox" x="0" y="0" width="1" height="1"><circle fill="white" cx="0.5" cy="0.5" r="0.5"></circle><rect fill="black" x="0.125" y="0.375" width="0.75" height="0.25" rx="0.125" ry="0.125"></rect></mask></defs><rect width="1" height="1" fill="${s.color}" mask="url(#${id})"></rect></svg>`;
 }
 
-/* Last.fm / Discord helpers ------------------------------------------------ */
 const LF_PLACEHOLDER = "2a96cbd8b46e442fc41c2b86b821562f";
 
 function hueFromString(s) {
@@ -326,9 +268,8 @@ function discordAvatar(user) {
   return `https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.${ext}?size=256`;
 }
 
-/* Discord activity (games, streaming, watching) from Lanyard ----------------- */
 const ACT_VERB = { 0: "playing", 1: "streaming", 2: "listening to", 3: "watching", 5: "competing in" };
-const ACT_TYPES = [0, 1, 3, 5]; // skip custom status (4) and spotify (2)
+const ACT_TYPES = [0, 1, 3, 5];
 
 function activityAsset(a) {
   const img = a && a.assets && a.assets.large_image;
@@ -339,7 +280,6 @@ function activityAsset(a) {
       if (a.application_id) return `https://cdn.discordapp.com/app-assets/${a.application_id}/${img}.png`;
     }
   }
-  // Games detected without rich presence have no asset — fall back to the app icon.
   if (a && a.application_id) return `https://dcdn.dstn.to/app-icons/${a.application_id}`;
   return "";
 }
@@ -370,13 +310,10 @@ function fmtDuration(ms) {
   return sec + "s";
 }
 
-/* Cover deep-dive: Last.fm art is often missing, so fall back to the iTunes
-   Search API (browser-CORS friendly) to guarantee a cover loads. ------------- */
 const coverCache = new Map();
 
-function coverImg({ src, artist, title, album, cls, alt, eager }) {
+function coverImg({ src, artist, title, album, alt }) {
   const attrs = [];
-  if (cls) attrs.push(`class="${cls}"`);
   attrs.push("data-cover");
   if (artist) attrs.push(`data-artist="${esc(artist)}"`);
   if (title) attrs.push(`data-title="${esc(title)}"`);
@@ -388,8 +325,6 @@ function coverImg({ src, artist, title, album, cls, alt, eager }) {
   return `<img ${attrs.join(" ")}>`;
 }
 
-// iTunes supports a JSONP callback, useful when its fetch endpoint is blocked
-// by browser cross-origin restrictions or privacy extensions.
 function itunesJsonp(url) {
   return new Promise((resolve, reject) => {
     const callback = `__portfolioArtwork_${Math.random().toString(36).slice(2)}`;
@@ -416,7 +351,7 @@ async function loadItunesResults(url) {
   try {
     const response = await fetch(url, { mode: "cors" });
     if (response.ok) return (await response.json()).results || [];
-  } catch (e) { /* fall through to JSONP */ }
+  } catch (e) { }
   try { return (await itunesJsonp(url)).results || []; }
   catch (e) { return []; }
 }
@@ -438,7 +373,6 @@ async function findCover({ artist, album, title }) {
   if (coverCache.has(key)) return coverCache.get(key);
 
   const promise = (async () => {
-    // 1) iTunes
     const itunesQueries = [];
     if (album) {
       itunesQueries.push({ term: [artist, album].filter(Boolean).join(" "), entity: "album" });
@@ -464,10 +398,9 @@ async function findCover({ artist, album, title }) {
           if (await loadImageUrl(large)) return large;
           if (await loadImageUrl(original)) return original;
         }
-      } catch (e) { /* try next */ }
+      } catch (e) { }
     }
 
-    // 2) MusicBrainz / Cover Art Archive
     if (album && artist) {
       try {
         const mbUrl = `https://musicbrainz.org/ws/2/release-group?query=releasegroup:"${encodeURIComponent(album)}"+AND+artist:"${encodeURIComponent(artist)}"&fmt=json&limit=1`;
@@ -485,17 +418,16 @@ async function findCover({ artist, album, title }) {
             }
           }
         }
-      } catch (e) { /* try next */ }
+      } catch (e) { }
     }
 
-    // 3) Last.fm
     if (artist) {
       try {
         const method = album ? "album.getinfo" : "track.getinfo";
         const params = new URLSearchParams({
           method,
           artist,
-          api_key: "b25b959554ed76058ac220b7b2e0a026", // public Last.fm API key
+          api_key: "b25b959554ed76058ac220b7b2e0a026",
           format: "json",
         });
         if (album) params.set("album", album);
@@ -507,10 +439,9 @@ async function findCover({ artist, album, title }) {
           const large = images.find((i) => i.size === "extralarge") || images.find((i) => i.size === "large") || images[images.length - 1];
           if (large?.["#text"]) return large["#text"];
         }
-      } catch (e) { /* try next */ }
+      } catch (e) { }
     }
 
-    // 4) Deezer
     if (artist) {
       try {
         const q = album ? `album:"${album}" artist:"${artist}"` : `track:"${title}" artist:"${artist}"`;
@@ -522,7 +453,7 @@ async function findCover({ artist, album, title }) {
           if (hit?.album?.cover_xl) return hit.album.cover_xl;
           if (hit?.album?.cover_big) return hit.album.cover_big;
         }
-      } catch (e) { /* ignore */ }
+      } catch (e) { }
     }
 
     return "";
@@ -540,8 +471,6 @@ async function hydrateCovers(root) {
     const artist = img.dataset.artist || "";
     const title = img.dataset.title || "";
     const album = img.dataset.album || "";
-    // Validate Last.fm image first. Placeholder or broken URLs must not
-    // prevent the artwork search from running.
     if (existing && await loadImageUrl(existing)) {
       if (img.isConnected) img.src = existing;
       return;
@@ -557,7 +486,6 @@ async function hydrateCovers(root) {
   }));
 }
 
-/* Live loaders ------------------------------------------------------------- */
 async function loadDiscord() {
   try {
     const res = await fetch(`${CONFIG.discord.api}/${CONFIG.discord.id}`);
@@ -650,9 +578,6 @@ async function loadLastfm() {
   else if (!SP.active) stopHomeLyrics();
 }
 
-/* --------------------------------------------------------------------------
-   Page renderers
-   -------------------------------------------------------------------------- */
 function pageHome() {
   const p = DATA.profile;
   const np = DATA.nowPlaying;
@@ -811,9 +736,9 @@ function renderTopList(key) {
   hydrateCovers(grid);
 }
 
-function projCard(p, i) {
+function projCard(p) {
   return `
-    <a class="proj-card ph" style="--h:${p.hue || 240}" href="${esc(p.url || "#")}" target="_blank" rel="noopener noreferrer" data-index="${i}">
+    <a class="proj-card ph" style="--h:${p.hue || 240}" href="${esc(p.url || "#")}" target="_blank" rel="noopener noreferrer">
       <img src="${esc(p.image)}" alt="${esc(p.name)} preview" loading="lazy" onerror="this.remove()">
       <span class="proj-caption">
         <span class="proj-ident">
@@ -911,23 +836,6 @@ function pageMoreGrid() {
     </div>`;
 }
 
-function contactLink(l) {
-  const icon = ICONS[l.glyph] || (BRAND[l.glyph] ? `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="${BRAND[l.glyph]}"></path></svg>` : "");
-  const right = l.href ? ICONS.externalLink : ICONS.copy;
-  const inner = `
-        <span class="contact-card-icons">
-          <span class="contact-brand">${icon}</span>
-          <span class="contact-link-icon">${right}</span>
-        </span>
-        <span class="contact-foot">
-          <span class="contact-name">${esc(l.name)}</span>
-          <span class="contact-handle">${esc(l.handle)}</span>
-        </span>`;
-  return l.href
-    ? `<a class="contact-card" href="${esc(l.href)}" target="_blank" rel="noopener noreferrer">${inner}</a>`
-    : `<button type="button" class="contact-card" data-copy="${esc(l.handle)}">${inner}</button>`;
-}
-
 function pageSetup() {
   return `
     <div class="page-inner">
@@ -978,26 +886,24 @@ function pageSetup() {
 
 function pageContact() {
   const c = DATA.contact;
-  const discord = c.links.find(l => l.id === "discord");
-  const github = { id: "github", name: "GitHub", handle: "@zephyrrunsyou", href: "https://github.com/zephyrrunsyou", glyph: "github" };
   return `
     <div class="page-inner">
       <button type="button" class="back-link" data-more-back>${ICONS.arrowLeft}<span>more</span></button>
       <h2 class="contact-title">contact</h2>
       <p class="contact-sub">${esc(c.subtitle)}</p>
       <div class="contact-grid contact-grid-single">
-        <button type="button" class="contact-card contact-card-lg" data-copy="${esc(discord.handle)}">
+        <button type="button" class="contact-card contact-card-lg" data-copy="${esc(c.discord)}">
           <span class="contact-eyebrow">${BRAND.discord ? `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="${BRAND.discord}"></path></svg>` : ""}discord</span>
           <span class="contact-email-row">
-            <span class="contact-email">${esc(discord.handle)}</span>
+            <span class="contact-email">${esc(c.discord)}</span>
             <span class="contact-copy">${ICONS.copy}<span class="contact-copy-text">copy</span></span>
           </span>
           <span class="contact-watermark">${BRAND.discord ? `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="${BRAND.discord}"></path></svg>` : ""}</span>
         </button>
-        <a class="contact-card contact-card-lg" href="${esc(github.href)}" target="_blank" rel="noopener noreferrer">
+        <a class="contact-card contact-card-lg" href="${esc(c.github.href)}" target="_blank" rel="noopener noreferrer">
           <span class="contact-eyebrow">${ICONS.github}github</span>
           <span class="contact-email-row">
-            <span class="contact-email">${esc(github.handle)}</span>
+            <span class="contact-email">${esc(c.github.handle)}</span>
             <span class="contact-link-icon">${ICONS.externalLink}</span>
           </span>
           <span class="contact-watermark">${ICONS.github}</span>
@@ -1013,13 +919,8 @@ const RENDERERS = {
   more: pageMore,
 };
 
-/* --------------------------------------------------------------------------
-   App state & init
-   -------------------------------------------------------------------------- */
 const TABS = ["home", "music", "projects", "more"];
 const viewport = document.getElementById("viewport");
-const modalBackdrop = document.getElementById("modal");
-const modalBody = modalBackdrop.querySelector(".modal");
 
 let projIndex = 0;
 let moreView = "grid";
@@ -1063,7 +964,7 @@ function setTab(tab) {
     a.setAttribute("aria-current", a.dataset.tab === tab ? "page" : "false");
   });
   viewport.scrollTop = 0;
-  document.title = "kyros";
+  document.title = "portfolio";
 }
 
 function go(tab) {
@@ -1076,7 +977,6 @@ function go(tab) {
   setTab(tab);
 }
 
-/* Clock -------------------------------------------------------------------- */
 let clockTimer = null;
 function startClock() {
   const tick = () => {
@@ -1090,7 +990,6 @@ function startClock() {
   clockTimer = setInterval(tick, 1000);
 }
 
-/* Projects carousel -------------------------------------------------------- */
 function layoutProjects() {
   const cards = [...document.querySelectorAll(".proj-card")];
   const n = cards.length;
@@ -1142,44 +1041,6 @@ function gotoProject(i) {
   layoutProjects();
 }
 
-/* Modal -------------------------------------------------------------------- */
-function openModal(id) {
-  const data = DATA.modals[id];
-  if (!data) return;
-  modalBody.innerHTML = `
-    <h3>${esc(data.title)}</h3>
-    <p class="modal-sub">${esc(data.subtitle || "")}</p>
-    ${(data.groups || [])
-      .map(
-        (g) => `
-      <div class="modal-group">
-        <h4>${esc(g.heading)}</h4>
-        <ul>
-          ${g.items
-            .map((it) => {
-              const inner = `<span class="k">${esc(it.k)}</span><span class="v">${esc(it.v)}</span>`;
-              return `<li>${it.href ? `<a href="${esc(it.href)}" target="_blank" rel="noopener noreferrer">${inner}</a>` : `<a>${inner}</a>`}</li>`;
-            })
-            .join("")}
-        </ul>
-      </div>`
-      )
-      .join("")}`;
-  modalBackdrop.classList.add("open");
-  modalBackdrop.setAttribute("aria-hidden", "false");
-}
-
-function closeModal() {
-  modalBackdrop.classList.remove("open");
-  modalBackdrop.setAttribute("aria-hidden", "true");
-}
-
-/* --------------------------------------------------------------------------
-   Spotify "Now Playing" — live position from Lanyard (WebSocket with REST
-   fallback) and synchronized lyrics from LRCLIB. Read-only: visitors are
-   never asked to authenticate and no private credentials are used.
-   Set your Discord user id in CONFIG.discord.id.
-   -------------------------------------------------------------------------- */
 const SP = {
   userId: CONFIG.discord.id,
   restUrl: CONFIG.discord.api + "/" + CONFIG.discord.id,
@@ -1199,7 +1060,7 @@ const SP = {
   homeLine: "",
   lyrics: [],
   synced: false,
-  lyricsStatus: "idle", // idle | loading | ok | none | instrumental
+  lyricsStatus: "idle",
   lyricsToken: 0,
   cache: new Map(),
   artUrl: "",
@@ -1219,7 +1080,6 @@ function spArtists(str) {
   return String(str || "").split(/\s*[;,]\s*/).filter(Boolean).join(", ");
 }
 
-/* --- Lanyard connection --------------------------------------------------- */
 function spStart() {
   spFetchRest();
   spConnect();
@@ -1231,7 +1091,7 @@ async function spFetchRest() {
     if (!res.ok) return;
     const json = await res.json();
     spApply(json && json.data);
-  } catch (e) { /* offline: the socket keeps retrying */ }
+  } catch (e) { }
 }
 
 function spConnect() {
@@ -1255,7 +1115,7 @@ function spConnect() {
     spScheduleReconnect();
   });
   ws.addEventListener("error", () => {
-    try { ws.close(); } catch (e) { /* ignore */ }
+    try { ws.close(); } catch (e) { }
   });
 }
 
@@ -1277,7 +1137,7 @@ function spOnMessage(ev) {
   }
   if (msg.op === 1) {
     SP.hbInterval = (msg.d && msg.d.heartbeat_interval) || 30000;
-    try { SP.ws.send(JSON.stringify({ op: 2, d: { subscribe_to_id: SP.userId } })); } catch (e) { /* ignore */ }
+    try { SP.ws.send(JSON.stringify({ op: 2, d: { subscribe_to_id: SP.userId } })); } catch (e) { }
     spStartHeartbeat();
     return;
   }
@@ -1304,7 +1164,7 @@ function spStartHeartbeat() {
   spStopHeartbeat();
   SP.hbTimer = setInterval(() => {
     if (SP.ws && SP.ws.readyState === 1) {
-      try { SP.ws.send(JSON.stringify({ op: 3 })); } catch (e) { /* ignore */ }
+      try { SP.ws.send(JSON.stringify({ op: 3 })); } catch (e) { }
     }
   }, SP.hbInterval);
 }
@@ -1316,7 +1176,6 @@ function spStopHeartbeat() {
   }
 }
 
-/* --- Presence -> state ---------------------------------------------------- */
 function spApply(data) {
   if (!data) return;
   spApplyActivity(data);
@@ -1369,7 +1228,6 @@ function spSetInactive() {
   spRenderState();
 }
 
-/* --- Position / loop ------------------------------------------------------ */
 function spPosition() {
   const t = SP.track;
   if (!t || !t.start || !t.end) return { pos: 0, dur: 0 };
@@ -1408,7 +1266,6 @@ function spStopLoop() {
   }
 }
 
-/* --- Rendering ------------------------------------------------------------ */
 function spRenderTrack(t) {
   const title = spEl("sp-title");
   const artist = spEl("sp-artist");
@@ -1447,7 +1304,6 @@ function spUpdateProgress() {
   if (remaining) remaining.textContent = "-" + spFmt(Math.max(0, dur - pos));
 }
 
-/* --- Now-playing cards ---------------------------------------------------- */
 function spSyncCards(track) {
   if (track) {
     DATA.nowPlaying = {
@@ -1476,7 +1332,6 @@ function spSyncCards(track) {
   }
 }
 
-/* --- Lyrics (LRCLIB) ------------------------------------------------------ */
 async function spLoadLyrics(track) {
   const token = ++SP.lyricsToken;
   SP.lyricsStatus = "loading";
@@ -1492,7 +1347,7 @@ async function spLoadLyrics(track) {
     data = await spFetchLyrics(track);
     SP.cache.set(key, data);
   }
-  if (token !== SP.lyricsToken) return; // superseded by a newer track
+  if (token !== SP.lyricsToken) return;
   if (!data) {
     SP.lyricsStatus = "none";
     spRenderLyrics();
@@ -1531,7 +1386,7 @@ async function spFetchLyrics(track) {
       const parsed = spParseResult(await res.json());
       if (parsed) return parsed;
     }
-  } catch (e) { /* fall through to search */ }
+  } catch (e) { }
   try {
     const res = await fetch("https://lrclib.net/api/search?" + base.toString());
     if (res.ok) {
@@ -1542,7 +1397,7 @@ async function spFetchLyrics(track) {
         if (parsed) return parsed;
       }
     }
-  } catch (e) { /* ignore */ }
+  } catch (e) { }
   return null;
 }
 
@@ -1679,9 +1534,6 @@ function spInit() {
   spStart();
 }
 
-/* --------------------------------------------------------------------------
-   Home card inline (live) lyrics — replaces the eq bars + status while playing
-   -------------------------------------------------------------------------- */
 const homeLyrics = { timer: null, lines: [], token: 0, startAt: 0 };
 
 function updateHomeLyric() {
@@ -1709,7 +1561,7 @@ async function startHomeLyrics(track) {
   let result = null;
   try {
     result = await spFetchLyrics(track);
-  } catch (e) { /* ignore */ }
+  } catch (e) { }
   if (token !== homeLyrics.token) return;
   homeLyrics.lines = result && result.synced ? result.synced : [];
   updateHomeLyric();
@@ -1733,7 +1585,7 @@ function nowPlayingKey(t) {
 let npKey = "";
 
 async function refreshNowPlaying() {
-  if (SP.active) return; // live Spotify takes priority via Lanyard
+  if (SP.active) return;
   let recent;
   try {
     recent = await lastfm("user.getrecenttracks", { limit: 1 });
@@ -1764,9 +1616,6 @@ async function refreshNowPlaying() {
   else stopHomeLyrics();
 }
 
-/* --------------------------------------------------------------------------
-   Events
-   -------------------------------------------------------------------------- */
 window.addEventListener("popstate", () => setTab(currentTab()));
 
 document.addEventListener("click", (e) => {
@@ -1818,8 +1667,6 @@ document.addEventListener("click", (e) => {
     } else if (id === "setup") {
       moreView = "setup";
       renderPage("more");
-    } else {
-      openModal(id);
     }
     return;
   }
@@ -1845,20 +1692,17 @@ document.addEventListener("click", (e) => {
     return;
   }
 
-  if (e.target === modalBackdrop) closeModal();
 });
 
 document.addEventListener("keydown", (e) => {
   if (e.key === "Escape") {
     if (SP.open) closePlayer();
-    closeModal();
   }
   if (currentTab() !== "projects") return;
   if (e.key === "ArrowLeft") moveProject(-1);
   if (e.key === "ArrowRight") moveProject(1);
 });
 
-/* Swipe on the project stage */
 (function enableSwipe() {
   let startX = null;
   viewport.addEventListener(
@@ -1877,9 +1721,6 @@ document.addEventListener("keydown", (e) => {
   });
 })();
 
-/* Parallax-ish: nothing needed, but keep backdrop visible under reduced motion */
-
-/* Boot */
 if (currentTab() === "home" && new URLSearchParams(location.search).has("tab")) {
   history.replaceState({ tab: "home" }, "", location.pathname);
 }
@@ -1888,14 +1729,11 @@ renderAll();
 spInit();
 setTab(currentTab());
 
-/* Hydrate from live sources */
 loadDiscord();
 loadLastfm();
 
-/* Re-check the now-playing track periodically to keep the home card lyric live */
 setInterval(refreshNowPlaying, 30000);
 
-/* Re-sync the real position the moment the tab becomes visible again */
 document.addEventListener("visibilitychange", () => {
   if (!document.hidden && SP.active) {
     spUpdateProgress();
