@@ -912,14 +912,76 @@ function pageContact() {
     </div>`;
 }
 
+const solidGlyph = (path) => `<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" d="${path}"/></svg>`;
+const EXPERIENCE_GLYPHS = {
+  "Languages I Use": solidGlyph('m7 4-7 8 7 8 2-2-5-6 5-6Zm10 0-2 2 5 6-5 6 2 2 7-8ZM13 2l-5 20h3l5-20Z'),
+  "Web Technologies I Use": solidGlyph('M4 2h16a3 3 0 0 1 3 3v14a3 3 0 0 1-3 3H4a3 3 0 0 1-3-3V5a3 3 0 0 1 3-3Zm0 3v2h2V5Zm4 0v2h2V5Zm-1 6-4 4 4 4 1.5-1.5L6 15l2.5-2.5Zm10 0-1.5 1.5L18 15l-2.5 2.5L17 19l4-4Z'),
+  "App & Bot Frameworks I Use": solidGlyph('M11 2h2v4h5a4 4 0 0 1 4 4v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4v-9a4 4 0 0 1 4-4h5ZM6 12a2 2 0 1 0 4 0 2 2 0 0 0-4 0Zm8 0a2 2 0 1 0 4 0 2 2 0 0 0-4 0Zm-6 5v2h8v-2Z'),
+  "Databases I Use": solidGlyph('M21 5c0 2.2-4 4-9 4S3 7.2 3 5s4-4 9-4 9 1.8 9 4ZM3 8c2 1.8 5.5 2.8 9 2.8S19 9.8 21 8v5c0 2.2-4 4-9 4s-9-1.8-9-4Zm0 8c2 1.8 5.5 2.8 9 2.8s7-1 9-2.8v3c0 2.2-4 4-9 4s-9-1.8-9-4Z'),
+  "Hosting & Systems I Use": solidGlyph('M6 20a5 5 0 0 1-1-10 7 7 0 0 1 13-3 6.5 6.5 0 0 1 0 13Z'),
+  "Runtimes & Build Tools I Use": solidGlyph('M4 2h16a3 3 0 0 1 3 3v14a3 3 0 0 1-3 3H4a3 3 0 0 1-3-3V5a3 3 0 0 1 3-3Zm2 5L4 9l4 4-4 4 2 2 6-6Zm7 10v2h7v-2Z'),
+  "Version Control I Use": solidGlyph('M8 4a3 3 0 1 1-4 0 3 3 0 0 1 4 0ZM5 7h2v9c2-3 10-1 10-7V7h2v2c0 8-12 6-12 10H5Zm15-3a3 3 0 1 1-6 0 3 3 0 0 1 6 0ZM9 20a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z'),
+  "Automation I Use": solidGlyph('m14 1-12 13h8l-1 9 13-14h-9Z'),
+  "Development Tools I Use": ICONS.keyboard,
+};
+
+const EXPERIENCE_STACK = [
+  { title: "Languages I Use", skills: [["c", "C"], ["cs", "C#"], ["cpp", "C++"], ["go", "Go"], ["java", "Java"], ["js", "JavaScript"], ["lua", "Lua"], ["php", "PHP"], ["powershell", "PowerShell"], ["py", "Python"], ["ruby", "Ruby"], ["rust", "Rust"], ["ts", "TypeScript"]] },
+  { title: "Web Technologies I Use", skills: [["html", "HTML"], ["bootstrap", "Bootstrap"], ["react", "React"], ["nextjs", "Next.js"], ["tailwind", "Tailwind CSS"], ["threejs", "Three.js"]] },
+  { title: "App & Bot Frameworks I Use", skills: [["dotnet", ".NET"], ["discordjs", "discord.js"], ["electron", "Electron"]] },
+  { title: "Databases I Use", skills: [["mongodb", "MongoDB"], ["supabase", "Supabase"], ["postgres", "PostgreSQL"], ["sqlite", "SQLite"]] },
+  { title: "Hosting & Systems I Use", skills: [["aws", "AWS"], ["cloudflare", "Cloudflare"], ["docker", "Docker"], ["linux", "Linux"]] },
+  { title: "Runtimes & Build Tools I Use", skills: [["bun", "Bun"], ["nodejs", "Node.js"], ["npm", "npm"], ["yarn", "Yarn"], ["vite", "Vite"]] },
+  { title: "Version Control I Use", skills: [["git", "Git"], ["github", "GitHub"]] },
+  { title: "Automation I Use", skills: [["githubactions", "GitHub Actions"]] },
+  { title: "Development Tools I Use", skills: [["vscode", "VS Code"], ["visualstudio", "Visual Studio"], ["replit", "Replit"], ["regex", "Regex"]] },
+];
+
+function pageExperience() {
+  const projects = [...DATA.projects].sort((a, b) => Number(b.years) - Number(a.years));
+  return `
+    <div class="page-inner experience">
+      <header class="experience-heading">
+        <h1>experience</h1>
+        <p>coding is how I explore ideas. from websites and discord bots to everyday tools, each project gives me a chance to try something new and build on what I know.</p>
+      </header>
+      <div class="experience-stack">
+        ${EXPERIENCE_STACK.map((group, index) => `
+          <section class="experience-skills${["App & Bot Frameworks I Use", "Databases I Use", "Version Control I Use", "Automation I Use"].includes(group.title) ? " experience-skills-compact" : ""}" aria-labelledby="experience-stack-${index}">
+            <span class="experience-glyph" aria-hidden="true">${EXPERIENCE_GLYPHS[group.title] || ""}</span>
+            <h2 id="experience-stack-${index}">${esc(group.title)}</h2>
+            <ul class="experience-icons">
+              ${group.skills.map(([id, label]) => `<li title="${esc(label)}"><img src="https://skillicons.dev/icons?i=${id}&amp;theme=dark" width="40" height="40" alt="" loading="lazy" decoding="async"><span>${esc(label)}</span></li>`).join("")}
+            </ul>
+          </section>`).join("")}
+      </div>
+      <section aria-labelledby="experience-projects-title">
+        <h2 id="experience-projects-title">hands-on experience</h2>
+        <ol class="experience-timeline">
+          ${projects.map(project => `
+            <li class="experience-entry">
+              <div class="experience-entry-heading">
+                <a href="${esc(project.url)}" target="_blank" rel="noopener noreferrer">${esc(project.name)}${ICONS.externalLink}</a>
+                <span class="experience-year">${esc(project.years)}</span>
+              </div>
+              <p>${esc(project.description)}</p>
+              <ul class="experience-tags" aria-label="Technologies used for ${esc(project.name)}">${(project.tech || []).map(skill => `<li>${esc(skill)}</li>`).join("")}</ul>
+            </li>`).join("")}
+        </ol>
+      </section>
+      <a class="experience-project-link" href="?tab=projects" data-open-tab="projects">explore my projects ${ICONS.arrowRight}</a>
+    </div>`;
+}
+
 const RENDERERS = {
   home: pageHome,
   music: pageMusic,
   projects: pageProjects,
+  experience: pageExperience,
   more: pageMore,
 };
 
-const TABS = ["home", "music", "projects", "more"];
+const TABS = ["home", "music", "projects", "experience", "more"];
 const viewport = document.getElementById("viewport");
 
 let projIndex = 0;
