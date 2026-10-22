@@ -126,7 +126,7 @@ const DATA = {
   ],
 
   contact: {
-    subtitle: "have something to build? my inbox is open",
+    subtitle: "my inbox is always open",
     discord: "@b5c8",
     github: { handle: "@zephyrrunsyou", href: "https://github.com/zephyrrunsyou" },
   },
