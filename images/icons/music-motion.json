@@ -1,0 +1,15 @@
+{
+  "duration": 1000.0,
+  "rotation": 180,
+  "keyframes": [
+    {
+      "transform": "rotate(0deg)",
+      "offset": 0,
+      "easing": "cubic-bezier(0.333,0,0.397,1)"
+    },
+    {
+      "transform": "rotate(180deg)",
+      "offset": 1
+    }
+  ]
+}

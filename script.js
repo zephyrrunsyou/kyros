@@ -14,7 +14,7 @@ const DATA = {
     url: "#",
     art: "",
     hue: 250,
-    statusText: "last played · 12m ago",
+    statusText: "last played Â· 12m ago",
     playing: false,
   },
 
@@ -24,14 +24,14 @@ const DATA = {
     { value: "980", label: "albums" },
     { value: "640", label: "artists" },
   ],
-  musicNote: "all time · top lists from the last 30 days",
+  musicNote: "all time Â· top lists from the last 30 days",
 
   topLists: {
     albums: [
       { title: "Late Bloomer, Early Death", sub: "Henry Morris", url: "#", image: "", hue: 12 },
-      { title: "PRIMA", sub: "ADÉLA", url: "#", image: "", hue: 210 },
+      { title: "PRIMA", sub: "ADÃ‰LA", url: "#", image: "", hue: 210 },
       { title: "ultraSOUND", sub: "The Neighbourhood", url: "#", image: "", hue: 280 },
-      { title: "Watch The Throne", sub: "Jaÿ-Z", url: "#", image: "", hue: 40 },
+      { title: "Watch The Throne", sub: "JaÃ¿-Z", url: "#", image: "", hue: 40 },
     ],
     artists: [
       { title: "Cigarettes After Sex", sub: "3.1k plays", url: "#", image: "", hue: 330, cover: { artist: "Cigarettes After Sex" } },
@@ -257,7 +257,7 @@ async function lastfm(method, params) {
   u.searchParams.set("format", "json");
   Object.entries(params || {}).forEach(([k, v]) => u.searchParams.set(k, v));
   const res = await fetch(u.toString());
-  if (!res.ok) throw new Error(`${method} → HTTP ${res.status}`);
+  if (!res.ok) throw new Error(`${method} â†’ HTTP ${res.status}`);
   return res.json();
 }
 
@@ -489,7 +489,7 @@ async function hydrateCovers(root) {
 async function loadDiscord() {
   try {
     const res = await fetch(`${CONFIG.discord.api}/${CONFIG.discord.id}`);
-    if (!res.ok) throw new Error("lanyard → HTTP " + res.status);
+    if (!res.ok) throw new Error("lanyard â†’ HTTP " + res.status);
     const { data } = await res.json();
     const u = (data && data.discord_user) || {};
     DATA.profile.name = u.display_name || u.global_name || u.username || DATA.profile.name;
@@ -533,7 +533,7 @@ async function loadLastfm() {
       art: lfImage(latest),
       hue: hueFromString(latest.name || ""),
       playing: !!now,
-      statusText: now ? "now playing" : latest.date && latest.date.uts ? "last played · " + timeAgo(latest.date.uts) : "last played",
+      statusText: now ? "now playing" : latest.date && latest.date.uts ? "last played Â· " + timeAgo(latest.date.uts) : "last played",
     };
     DATA._lastfmNowPlaying = lfNp;
     if (!SP.active) {
@@ -559,7 +559,7 @@ async function loadLastfm() {
     { value: formatCount(i.album_count), label: "albums" },
     { value: formatCount(i.artist_count), label: "artists" },
   ];
-  DATA.musicNote = "all time · top lists from the last 30 days";
+  DATA.musicNote = "all time Â· top lists from the last 30 days";
 
   const albumList = (albums.topalbums && albums.topalbums.album) || [];
   const artistList = (artists.topartists && artists.topartists.artist) || [];
@@ -612,7 +612,9 @@ function pageHome() {
             ${
               np.playing
                 ? `<span class="np-lyric" id="np-lyric" title="${esc(np.statusText)}">now playing</span>`
-                : `<span class="np-status">${esc(np.statusText)}</span>`
+                : np.statusText === "paused"
+                  ? `<span class="np-status playback-paused" role="img" aria-label="Paused" title="Paused">${PLAYER_ICONS.pause}</span>`
+                  : `<span class="np-status">${esc(np.statusText)}</span>`
             }
           </div>
         </div>
@@ -625,7 +627,7 @@ function pageHome() {
 function activityCard() {
   const a = DATA.activity;
   if (!a) return "";
-  const sub = [a.details, a.state].filter(Boolean).join(" · ");
+  const sub = [a.details, a.state].filter(Boolean).join(" Â· ");
   return `
       <div class="act-block">
         <div class="act-card">
@@ -848,8 +850,8 @@ function pageSetup() {
             <h3 class="mb-2.5 text-[11.5px] lowercase text-white/40">pc</h3>
             <ul class="grid grid-cols-6 gap-2">
               <li class="col-span-6 sm:col-span-3 min-h-[128px] rounded-[12px] border border-white/[0.07] bg-white/[0.03] backdrop-blur-xl relative flex flex-col justify-between overflow-hidden p-3.5"><span class="flex items-center gap-1.5 text-[11px] lowercase text-white/40"><svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 256 256" aria-hidden="true" class="h-3.5 w-3.5 text-white/55" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M232,48H16a8,8,0,0,0-8,8V208a8,8,0,0,0,16,0V192H40v16a8,8,0,0,0,16,0V192H72v16a8,8,0,0,0,16,0V192h16v16a8,8,0,0,0,16,0V192H232a16,16,0,0,0,16-16V64A16,16,0,0,0,232,48Zm-20,72a35.81,35.81,0,0,1-5.53,19.16L156.84,89.53A36,36,0,0,1,212,120Zm-96,0a35.81,35.81,0,0,1-5.53,19.16L60.84,89.53A36,36,0,0,1,116,120ZM80,156a36,36,0,0,1-30.47-55.16l49.63,49.63A35.81,35.81,0,0,1,80,156Zm60-36a35.81,35.81,0,0,1,5.53-19.16l49.63,49.63A36,36,0,0,1,140,120Z"></path></svg>gpu</span><span class="mt-3 block"><span class="line-clamp-2 block font-semibold tracking-tight text-white text-[19px]">RTX 5080</span><span class="block truncate text-[11.5px] text-white/45">NVIDIA GeForce</span></span><svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 256 256" aria-hidden="true" class="pointer-events-none absolute -bottom-4 -right-3 h-24 w-24 text-white/[0.04]" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M232,48H16a8,8,0,0,0-8,8V208a8,8,0,0,0,16,0V192H40v16a8,8,0,0,0,16,0V192H72v16a8,8,0,0,0,16,0V192h16v16a8,8,0,0,0,16,0V192H232a16,16,0,0,0,16-16V64A16,16,0,0,0,232,48Zm-20,72a35.81,35.81,0,0,1-5.53,19.16L156.84,89.53A36,36,0,0,1,212,120Zm-96,0a35.81,35.81,0,0,1-5.53,19.16L60.84,89.53A36,36,0,0,1,116,120ZM80,156a36,36,0,0,1-30.47-55.16l49.63,49.63A35.81,35.81,0,0,1,80,156Zm60-36a35.81,35.81,0,0,1,5.53-19.16l49.63,49.63A36,36,0,0,1,140,120Z"></path></svg></li>
-              <li class="col-span-6 sm:col-span-3 min-h-[128px] rounded-[12px] border border-white/[0.07] bg-white/[0.03] backdrop-blur-xl relative flex flex-col justify-between overflow-hidden p-3.5"><span class="flex items-center gap-1.5 text-[11px] lowercase text-white/40"><svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 256 256" aria-hidden="true" class="h-3.5 w-3.5 text-white/55" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M104,104h48v48H104Zm136,48a8,8,0,0,1-8,8H216v40a16,16,0,0,1-16,16H160v16a8,8,0,0,1-16,0V216H112v16a8,8,0,0,1-16,0V216H56a16,16,0,0,1-16-16V160H24a8,8,0,0,1,0-16H40V112H24a8,8,0,0,1,0-16H40V56A16,16,0,0,1,56,40H96V24a8,8,0,0,1,16,0V40h32V24a8,8,0,0,1,16,0V40h40a16,16,0,0,1,16,16V96h16a8,8,0,0,1,0,16H216v32h16A8,8,0,0,1,240,152ZM168,96a8,8,0,0,0-8-8H96a8,8,0,0,0-8,8v64a8,8,0,0,0,8,8h64a8,8,0,0,0,8-8Z"></path></svg>cpu</span><span class="mt-3 block"><span class="line-clamp-2 block font-semibold tracking-tight text-white text-[19px]">Intel Core Ultra 9 285k</span><span class="block truncate text-[11.5px] text-white/45">Intel Core · 24 cores</span></span><svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 256 256" aria-hidden="true" class="pointer-events-none absolute -bottom-4 -right-3 h-24 w-24 text-white/[0.04]" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M104,104h48v48H104Zm136,48a8,8,0,0,1-8,8H216v40a16,16,0,0,1-16,16H160v16a8,8,0,0,1-16,0V216H112v16a8,8,0,0,1-16,0V216H56a16,16,0,0,1-16-16V160H24a8,8,0,0,1,0-16H40V112H24a8,8,0,0,1,0-16H40V56A16,16,0,0,1,56,40H96V24a8,8,0,0,1,16,0V40h32V24a8,8,0,0,1,16,0V40h40a16,16,0,0,1,16,16V96h16a8,8,0,0,1,0,16H216v32h16A8,8,0,0,1,240,152ZM168,96a8,8,0,0,0-8-8H96a8,8,0,0,0-8,8v64a8,8,0,0,0,8,8h64a8,8,0,0,0,8-8Z"></path></svg></li>
-              <li class="col-span-3 sm:col-span-2 min-h-[104px] rounded-[12px] border border-white/[0.07] bg-white/[0.03] backdrop-blur-xl relative flex flex-col justify-between overflow-hidden p-3.5"><span class="flex items-center gap-1.5 text-[11px] lowercase text-white/40"><svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 256 256" aria-hidden="true" class="h-3.5 w-3.5 text-white/55" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M232,56H24A16,16,0,0,0,8,72V200a8,8,0,0,0,16,0V184H40v16a8,8,0,0,0,16,0V184H72v16a8,8,0,0,0,16,0V184h16v16a8,8,0,0,0,16,0V184h16v16a8,8,0,0,0,16,0V184h16v16a8,8,0,0,0,16,0V184h16v16a8,8,0,0,0,16,0V184h16v16a8,8,0,0,0,16,0V72A16,16,0,0,0,232,56ZM208,96v48H144V96Zm-96,0v48H48V96Z"></path></svg>memory</span><span class="mt-3 block"><span class="line-clamp-2 block font-semibold tracking-tight text-white text-[14.5px]">64GB DDR5</span><span class="block truncate text-[11.5px] text-white/45">TG · 8000+ MT/s</span></span></li>
+              <li class="col-span-6 sm:col-span-3 min-h-[128px] rounded-[12px] border border-white/[0.07] bg-white/[0.03] backdrop-blur-xl relative flex flex-col justify-between overflow-hidden p-3.5"><span class="flex items-center gap-1.5 text-[11px] lowercase text-white/40"><svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 256 256" aria-hidden="true" class="h-3.5 w-3.5 text-white/55" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M104,104h48v48H104Zm136,48a8,8,0,0,1-8,8H216v40a16,16,0,0,1-16,16H160v16a8,8,0,0,1-16,0V216H112v16a8,8,0,0,1-16,0V216H56a16,16,0,0,1-16-16V160H24a8,8,0,0,1,0-16H40V112H24a8,8,0,0,1,0-16H40V56A16,16,0,0,1,56,40H96V24a8,8,0,0,1,16,0V40h32V24a8,8,0,0,1,16,0V40h40a16,16,0,0,1,16,16V96h16a8,8,0,0,1,0,16H216v32h16A8,8,0,0,1,240,152ZM168,96a8,8,0,0,0-8-8H96a8,8,0,0,0-8,8v64a8,8,0,0,0,8,8h64a8,8,0,0,0,8-8Z"></path></svg>cpu</span><span class="mt-3 block"><span class="line-clamp-2 block font-semibold tracking-tight text-white text-[19px]">Intel Core Ultra 9 285k</span><span class="block truncate text-[11.5px] text-white/45">Intel Core Â· 24 cores</span></span><svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 256 256" aria-hidden="true" class="pointer-events-none absolute -bottom-4 -right-3 h-24 w-24 text-white/[0.04]" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M104,104h48v48H104Zm136,48a8,8,0,0,1-8,8H216v40a16,16,0,0,1-16,16H160v16a8,8,0,0,1-16,0V216H112v16a8,8,0,0,1-16,0V216H56a16,16,0,0,1-16-16V160H24a8,8,0,0,1,0-16H40V112H24a8,8,0,0,1,0-16H40V56A16,16,0,0,1,56,40H96V24a8,8,0,0,1,16,0V40h32V24a8,8,0,0,1,16,0V40h40a16,16,0,0,1,16,16V96h16a8,8,0,0,1,0,16H216v32h16A8,8,0,0,1,240,152ZM168,96a8,8,0,0,0-8-8H96a8,8,0,0,0-8,8v64a8,8,0,0,0,8,8h64a8,8,0,0,0,8-8Z"></path></svg></li>
+              <li class="col-span-3 sm:col-span-2 min-h-[104px] rounded-[12px] border border-white/[0.07] bg-white/[0.03] backdrop-blur-xl relative flex flex-col justify-between overflow-hidden p-3.5"><span class="flex items-center gap-1.5 text-[11px] lowercase text-white/40"><svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 256 256" aria-hidden="true" class="h-3.5 w-3.5 text-white/55" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M232,56H24A16,16,0,0,0,8,72V200a8,8,0,0,0,16,0V184H40v16a8,8,0,0,0,16,0V184H72v16a8,8,0,0,0,16,0V184h16v16a8,8,0,0,0,16,0V184h16v16a8,8,0,0,0,16,0V184h16v16a8,8,0,0,0,16,0V184h16v16a8,8,0,0,0,16,0V184h16v16a8,8,0,0,0,16,0V72A16,16,0,0,0,232,56ZM208,96v48H144V96Zm-96,0v48H48V96Z"></path></svg>memory</span><span class="mt-3 block"><span class="line-clamp-2 block font-semibold tracking-tight text-white text-[14.5px]">64GB DDR5</span><span class="block truncate text-[11.5px] text-white/45">TG Â· 8000+ MT/s</span></span></li>
               <li class="col-span-3 sm:col-span-2 min-h-[104px] rounded-[12px] border border-white/[0.07] bg-white/[0.03] backdrop-blur-xl relative flex flex-col justify-between overflow-hidden p-3.5"><span class="flex items-center gap-1.5 text-[11px] lowercase text-white/40"><svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 256 256" aria-hidden="true" class="h-3.5 w-3.5 text-white/55" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M88,111.31l48,48V220a4,4,0,0,1-4,4H48a16,16,0,0,1-16-16V48A16,16,0,0,1,48,32H68a4,4,0,0,1,4,4V153.38a24,24,0,1,0,16,0ZM80,184a8,8,0,1,0-8-8A8,8,0,0,0,80,184Zm104-80a8,8,0,1,0-8,8A8,8,0,0,0,184,104Zm24-72H156a4,4,0,0,0-4,4V68.69l13.66,13.66a24,24,0,1,1-11.31,11.31l-16-16A8,8,0,0,1,136,72V36a4,4,0,0,0-4-4H92a4,4,0,0,0-4,4V88.69l61.66,61.65A8,8,0,0,1,152,156v64a4,4,0,0,0,4,4h52a16,16,0,0,0,16-16V48A16,16,0,0,0,208,32Z"></path></svg>motherboard</span><span class="mt-3 block"><span class="line-clamp-2 block font-semibold tracking-tight text-white text-[14.5px]">Z890 MAX GAMING</span><span class="block truncate text-[11.5px] text-white/45">ASUS</span></span></li>
               <li class="col-span-3 sm:col-span-2 min-h-[104px] rounded-[12px] border border-white/[0.07] bg-white/[0.03] backdrop-blur-xl relative flex flex-col justify-between overflow-hidden p-3.5"><span class="flex items-center gap-1.5 text-[11px] lowercase text-white/40"><svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 256 256" aria-hidden="true" class="h-3.5 w-3.5 text-white/55" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M208,40H48A16,16,0,0,0,32,56v48a16,16,0,0,0,16,16H208a16,16,0,0,0,16-16V56A16,16,0,0,0,208,40ZM180,92a12,12,0,1,1,12-12A12,12,0,0,1,180,92Z"></path><path d="M208,136H48a16,16,0,0,0-16,16v48a16,16,0,0,0,16,16H208a16,16,0,0,0,16-16V152A16,16,0,0,0,208,136Zm-28,52a12,12,0,1,1,12-12A12,12,0,0,1,180,188Z"></path></svg>storage</span><span class="mt-3 block"><span class="line-clamp-2 block font-semibold tracking-tight text-white text-[14.5px]">4TB</span><span class="block truncate text-[11px] text-white/45">WD Blue SN5000 NVMe</span></span></li>
             </ul>
@@ -857,8 +859,8 @@ function pageSetup() {
           <section>
             <h3 class="mb-2.5 text-[11.5px] lowercase text-white/40">desk</h3>
             <ul class="grid grid-cols-6 gap-2">
-              <li class="col-span-3 min-h-[128px] rounded-[12px] border border-white/[0.07] bg-white/[0.03] backdrop-blur-xl relative flex flex-col justify-between overflow-hidden p-3.5"><span class="flex items-center gap-1.5 text-[11px] lowercase text-white/40"><svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 256 256" aria-hidden="true" class="h-3.5 w-3.5 text-white/55" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M232,64V176a24,24,0,0,1-24,24H48a24,24,0,0,1-24-24V64A24,24,0,0,1,48,40H208A24,24,0,0,1,232,64ZM160,216H96a8,8,0,0,0,0,16h64a8,8,0,0,0,0-16Z"></path></svg>main monitor</span><span class="mt-3 block"><span class="line-clamp-2 block font-semibold tracking-tight text-white text-[19px]">ROG PG259QNR</span><span class="block truncate text-[11.5px] text-white/45">ASUS · 24"</span></span><svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 256 256" aria-hidden="true" class="pointer-events-none absolute -bottom-4 -right-3 h-24 w-24 text-white/[0.04]" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M232,64V176a24,24,0,0,1-24,24H48a24,24,0,0,1-24-24V64A24,24,0,0,1,48,40H208A24,24,0,0,1,232,64ZM160,216H96a8,8,0,0,0,0,16h64a8,8,0,0,0,0-16Z"></path></svg></li>
-              <li class="col-span-3 min-h-[128px] rounded-[12px] border border-white/[0.07] bg-white/[0.03] backdrop-blur-xl relative flex flex-col justify-between overflow-hidden p-3.5"><span class="flex items-center gap-1.5 text-[11px] lowercase text-white/40"><svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 256 256" aria-hidden="true" class="h-3.5 w-3.5 text-white/55" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M232,64V176a24,24,0,0,1-24,24H48a24,24,0,0,1-24-24V64A24,24,0,0,1,48,40H208A24,24,0,0,1,232,64ZM160,216H96a8,8,0,0,0,0,16h64a8,8,0,0,0,0-16Z"></path></svg>second monitor</span><span class="mt-3 block"><span class="line-clamp-2 block font-semibold tracking-tight text-white text-[19px]">VG247Q1A</span><span class="block truncate text-[11.5px] text-white/45">ASUS · 24"</span></span><svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 256 256" aria-hidden="true" class="pointer-events-none absolute -bottom-4 -right-3 h-24 w-24 text-white/[0.04]" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M232,64V176a24,24,0,0,1-24,24H48a24,24,0,0,1-24-24V64A24,24,0,0,1,48,40H208A24,24,0,0,1,232,64ZM160,216H96a8,8,0,0,0,0,16h64a8,8,0,0,0,0-16Z"></path></svg></li>
+              <li class="col-span-3 min-h-[128px] rounded-[12px] border border-white/[0.07] bg-white/[0.03] backdrop-blur-xl relative flex flex-col justify-between overflow-hidden p-3.5"><span class="flex items-center gap-1.5 text-[11px] lowercase text-white/40"><svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 256 256" aria-hidden="true" class="h-3.5 w-3.5 text-white/55" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M232,64V176a24,24,0,0,1-24,24H48a24,24,0,0,1-24-24V64A24,24,0,0,1,48,40H208A24,24,0,0,1,232,64ZM160,216H96a8,8,0,0,0,0,16h64a8,8,0,0,0,0-16Z"></path></svg>main monitor</span><span class="mt-3 block"><span class="line-clamp-2 block font-semibold tracking-tight text-white text-[19px]">ROG PG259QNR</span><span class="block truncate text-[11.5px] text-white/45">ASUS Â· 24"</span></span><svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 256 256" aria-hidden="true" class="pointer-events-none absolute -bottom-4 -right-3 h-24 w-24 text-white/[0.04]" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M232,64V176a24,24,0,0,1-24,24H48a24,24,0,0,1-24-24V64A24,24,0,0,1,48,40H208A24,24,0,0,1,232,64ZM160,216H96a8,8,0,0,0,0,16h64a8,8,0,0,0,0-16Z"></path></svg></li>
+              <li class="col-span-3 min-h-[128px] rounded-[12px] border border-white/[0.07] bg-white/[0.03] backdrop-blur-xl relative flex flex-col justify-between overflow-hidden p-3.5"><span class="flex items-center gap-1.5 text-[11px] lowercase text-white/40"><svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 256 256" aria-hidden="true" class="h-3.5 w-3.5 text-white/55" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M232,64V176a24,24,0,0,1-24,24H48a24,24,0,0,1-24-24V64A24,24,0,0,1,48,40H208A24,24,0,0,1,232,64ZM160,216H96a8,8,0,0,0,0,16h64a8,8,0,0,0,0-16Z"></path></svg>second monitor</span><span class="mt-3 block"><span class="line-clamp-2 block font-semibold tracking-tight text-white text-[19px]">VG247Q1A</span><span class="block truncate text-[11.5px] text-white/45">ASUS Â· 24"</span></span><svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 256 256" aria-hidden="true" class="pointer-events-none absolute -bottom-4 -right-3 h-24 w-24 text-white/[0.04]" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M232,64V176a24,24,0,0,1-24,24H48a24,24,0,0,1-24-24V64A24,24,0,0,1,48,40H208A24,24,0,0,1,232,64ZM160,216H96a8,8,0,0,0,0,16h64a8,8,0,0,0,0-16Z"></path></svg></li>
               <li class="col-span-3 min-h-[92px] rounded-[12px] border border-white/[0.07] bg-white/[0.03] backdrop-blur-xl relative flex flex-col justify-between overflow-hidden p-3.5"><span class="flex items-center gap-1.5 text-[11px] lowercase text-white/40"><svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 256 256" aria-hidden="true" class="h-3.5 w-3.5 text-white/55" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M224,48H32A16,16,0,0,0,16,64V192a16,16,0,0,0,16,16H224a16,16,0,0,0,16-16V64A16,16,0,0,0,224,48ZM64,168H48a8,8,0,0,1,0-16H64a8,8,0,0,1,0,16Zm96,0H96a8,8,0,0,1,0-16h64a8,8,0,0,1,0,16Zm48,0H192a8,8,0,0,1,0-16h16a8,8,0,0,1,0,16Zm0-32H48a8,8,0,0,1,0-16H208a8,8,0,0,1,0,16Zm0-32H48a8,8,0,0,1,0-16H208a8,8,0,0,1,0,16Z"></path></svg>keyboard</span><span class="mt-3 block"><span class="line-clamp-2 block font-semibold tracking-tight text-white text-[14.5px]">One 3 Mini</span><span class="block truncate text-[11.5px] text-white/45">Ducky</span></span></li>
               <li class="col-span-3 min-h-[92px] rounded-[12px] border border-white/[0.07] bg-white/[0.03] backdrop-blur-xl relative flex flex-col justify-between overflow-hidden p-3.5"><span class="flex items-center gap-1.5 text-[11px] lowercase text-white/40"><svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 256 256" aria-hidden="true" class="h-3.5 w-3.5 text-white/55" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M144,16H112A64.07,64.07,0,0,0,48,80v96a64.07,64.07,0,0,0,64,64h32a64.07,64.07,0,0,0,64-64V80A64.07,64.07,0,0,0,144,16Zm48,64v24H136V32h8A48.05,48.05,0,0,1,192,80ZM112,32h8v72H64V80A48.05,48.05,0,0,1,112,32Z"></path></svg>mouse</span><span class="mt-3 block"><span class="line-clamp-2 block font-semibold tracking-tight text-white text-[14.5px]">Model O</span><span class="block truncate text-[11.5px] text-white/45">Glorious</span></span></li>
             </ul>
@@ -1022,12 +1024,90 @@ function setTab(tab) {
     p.hidden = p.dataset.page !== tab;
   });
   document.querySelectorAll(".nav-link").forEach((a) => {
+    const newlySelected = a.dataset.tab === tab && !a.classList.contains("active");
     a.classList.toggle("active", a.dataset.tab === tab);
     a.setAttribute("aria-current", a.dataset.tab === tab ? "page" : "false");
+    if (newlySelected) animateNavIcon(a);
   });
   viewport.scrollTop = 0;
   document.title = "kyros";
 }
+
+const navAnimations = new Map();
+const navMotionPreference = window.matchMedia("(prefers-reduced-motion: reduce)");
+let musicIconMotion = null;
+let musicIconPlayback = null;
+let musicIconRotation = 0;
+
+function animateNavIcon(link) {
+  if (navMotionPreference.matches) return;
+  if (link.dataset.tab === "music") {
+    const icon = link.querySelector("svg");
+    if (!icon || !musicIconMotion) return;
+    if (musicIconPlayback && musicIconPlayback.playState === "running") return;
+    const frames = musicIconMotion.keyframes.map(frame => ({
+      ...frame,
+      transform: `rotate(${musicIconRotation + Number(frame.transform.match(/rotate\(([-\d.]+)deg\)/)[1])}deg)`,
+    }));
+    const playback = icon.animate(frames, {
+      duration: musicIconMotion.duration,
+      fill: "forwards",
+    });
+    musicIconPlayback = playback;
+    playback.onfinish = () => {
+      icon.style.transform = frames[frames.length - 1].transform;
+      musicIconRotation = (musicIconRotation + musicIconMotion.rotation) % 360;
+      playback.cancel();
+      if (musicIconPlayback === playback) musicIconPlayback = null;
+    };
+    return;
+  }
+  const animation = navAnimations.get(link.dataset.tab);
+  if (animation && animation.isLoaded) animation.goToAndPlay(0, true);
+}
+
+function initNavAnimation() {
+  fetch("images/icons/music-motion.json")
+    .then(response => {
+      if (!response.ok) throw new Error("Music icon motion unavailable");
+      return response.json();
+    })
+    .then(motion => { musicIconMotion = motion; })
+    .catch(() => { });
+  if (!window.lottie) return;
+  document.querySelectorAll(".nav-icon-animation").forEach(container => {
+    const link = container.closest(".nav-link");
+    const animation = window.lottie.loadAnimation({
+      container, renderer: "svg", loop: false, autoplay: false,
+      path: `images/icons/${container.dataset.icon}.json`,
+      rendererSettings: { preserveAspectRatio: "xMidYMid meet" },
+    });
+    navAnimations.set(link.dataset.tab, animation);
+    animation.addEventListener("DOMLoaded", () => {
+      link.classList.add("has-icon-animation");
+      animation.goToAndStop(0, true);
+    });
+    animation.addEventListener("complete", () => animation.goToAndStop(0, true));
+    animation.addEventListener("data_failed", () => link.classList.remove("has-icon-animation"));
+  });
+  navMotionPreference.addEventListener("change", () => {
+    if (!navMotionPreference.matches) return;
+    if (musicIconPlayback) musicIconPlayback.cancel();
+    musicIconPlayback = null;
+    musicIconRotation = 0;
+    const musicIcon = document.querySelector('.nav-link[data-tab="music"] > svg');
+    if (musicIcon) musicIcon.style.removeProperty("transform");
+    navAnimations.forEach(animation => {
+      if (animation.isLoaded) animation.goToAndStop(0, true);
+    });
+  });
+}
+
+initNavAnimation();
+document.querySelectorAll(".nav-link").forEach(link => {
+  link.addEventListener("pointerenter", () => animateNavIcon(link));
+  link.addEventListener("focus", () => animateNavIcon(link));
+});
 
 function go(tab) {
   if (!TABS.includes(tab)) tab = "home";
@@ -1385,20 +1465,107 @@ function spStopLoop() {
   }
 }
 
+function spUpdateTitleScroll() {
+  const title = spEl("sp-title");
+  const text = title && title.querySelector(".sp-title-text");
+  if (!text) return;
+  const distance = Math.max(0, text.scrollWidth - title.clientWidth);
+  title.classList.toggle("is-overflowing", distance > 1);
+  title.style.setProperty("--sp-title-distance", `${-distance}px`);
+  title.style.setProperty("--sp-title-duration", `${Math.max(8, distance / 25 + 5)}s`);
+}
+
+function spAnalyzeArtwork(url) {
+  const root = spEl("player");
+  if (!root) return;
+  root.style.setProperty("--sp-backdrop-shade", ".42");
+  if (!url) return;
+  const sample = new Image();
+  sample.crossOrigin = "anonymous";
+  sample.onload = () => {
+    if (SP.artUrl !== url) return;
+    try {
+      const canvas = document.createElement("canvas");
+      canvas.width = canvas.height = 16;
+      const ctx = canvas.getContext("2d", { willReadFrequently: true });
+      ctx.drawImage(sample, 0, 0, 16, 16);
+      const pixels = ctx.getImageData(0, 0, 16, 16).data;
+      let luminance = 0;
+      for (let i = 0; i < pixels.length; i += 4) {
+        luminance += (0.2126 * pixels[i] + 0.7152 * pixels[i + 1] + 0.0722 * pixels[i + 2]) / 255;
+      }
+      const brightness = luminance / (pixels.length / 4);
+      root.style.setProperty("--sp-backdrop-shade", String(0.2 + brightness * 0.48));
+    } catch (e) { /* Keep the default shade if artwork cannot be sampled. */ }
+  };
+  sample.src = url;
+}
+
+function spSetAtmosphere(url) {
+  const layers = [...document.querySelectorAll(".sp-atmosphere span")];
+  const current = layers.find(layer => layer.classList.contains("is-visible"));
+  if (!url) {
+    spAnalyzeArtwork("");
+    layers.forEach(layer => { layer.classList.remove("is-visible"); delete layer.dataset.art; });
+    return;
+  }
+  if (current && current.dataset.art === url) return;
+  spAnalyzeArtwork(url);
+  const next = layers.find(layer => layer !== current);
+  if (!next) return;
+  next.style.backgroundImage = `url(${JSON.stringify(url)})`;
+  next.dataset.art = url;
+  next.classList.add("is-visible");
+  if (current) current.classList.remove("is-visible");
+}
+
 function spRenderTrack(t) {
   const title = spEl("sp-title");
   const artist = spEl("sp-artist");
   const art = spEl("sp-art");
+  const artFrame = art && art.closest(".sp-art");
   const ph = spEl("sp-art-ph");
-  if (title) title.textContent = t.title || "—";
+  if (title) {
+    const text = title.querySelector(".sp-title-text");
+    if (text) text.textContent = t.title || "—";
+    title.title = t.title || "";
+    requestAnimationFrame(spUpdateTitleScroll);
+  }
   if (artist) artist.textContent = t.artist || "";
   if (ph) ph.style.setProperty("--h", hueFromString(t.title || ""));
+  if (art && !t.art) {
+    spSetAtmosphere("");
+    SP.artUrl = "";
+    art.classList.remove("loaded");
+    art.removeAttribute("src");
+    if (artFrame) {
+      artFrame.classList.remove("has-ambient");
+      artFrame.style.removeProperty("--sp-artwork");
+    }
+  }
   if (art && t.art && t.art !== SP.artUrl) {
     SP.artUrl = t.art;
     const url = t.art;
     art.classList.remove("loaded");
-    art.onload = () => { if (SP.artUrl === url) art.classList.add("loaded"); };
-    art.onerror = () => { art.classList.remove("loaded"); };
+    if (artFrame) artFrame.classList.remove("has-ambient");
+    art.onload = () => {
+      if (SP.artUrl !== url) return;
+      art.classList.add("loaded");
+      spSetAtmosphere(url);
+      if (artFrame) {
+        artFrame.style.setProperty("--sp-artwork", `url(${JSON.stringify(url)})`);
+        artFrame.classList.add("has-ambient");
+      }
+    };
+    art.onerror = () => {
+      if (SP.artUrl !== url) return;
+      art.classList.remove("loaded");
+      spSetAtmosphere("");
+      if (artFrame) {
+        artFrame.classList.remove("has-ambient");
+        artFrame.style.removeProperty("--sp-artwork");
+      }
+    };
     art.src = url;
   }
 }
@@ -1409,7 +1576,14 @@ function spRenderState() {
   root.classList.toggle("is-active", SP.active);
   root.classList.toggle("is-paused", SP.paused);
   const status = spEl("sp-status");
-  if (status) status.textContent = SP.active ? (SP.paused ? "paused" : "now playing") : "";
+  if (status) {
+    status.hidden = !SP.active || !SP.paused;
+    if (SP.active && SP.paused) {
+      status.innerHTML = `<span class="playback-paused" role="img" aria-label="Paused" title="Paused">${PLAYER_ICONS.pause}</span>`;
+    } else {
+      status.textContent = "";
+    }
+  }
   const playbackIcon = root.querySelector(".sp-ic-main");
   if (playbackIcon) playbackIcon.innerHTML = SP.paused
     ? '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4v16l14-8Z"/></svg>'
@@ -1427,7 +1601,7 @@ function spUpdateProgress() {
   const { pos, dur } = spPosition();
   if (fill) fill.style.width = (dur ? (pos / dur) * 100 : 0) + "%";
   if (elapsed) elapsed.textContent = spFmt(pos);
-  if (remaining) remaining.textContent = "-" + spFmt(Math.max(0, dur - pos));
+  if (remaining) remaining.textContent = spFmt(dur);
 }
 
 function spSyncCards(track) {
@@ -1564,7 +1738,7 @@ function spRenderLyrics() {
   if (!box) return;
   SP.lineIndex = -2;
   if (SP.lyricsStatus === "loading") {
-    box.innerHTML = '<p class="sp-lyrics-note">loading lyrics…</p>';
+    box.innerHTML = '<p class="sp-lyrics-note">loading lyricsâ€¦</p>';
     return;
   }
   if (SP.lyricsStatus === "instrumental") {
@@ -1575,7 +1749,7 @@ function spRenderLyrics() {
     box.innerHTML = '<p class="sp-lyrics-note">no synchronized lyrics available</p>';
     return;
   }
-  box.innerHTML = SP.lyrics.map((l) => `<p class="sp-lyric-line">${esc(l.text) || "♪"}</p>`).join("");
+  box.innerHTML = SP.lyrics.map((l) => `<p class="sp-lyric-line">${esc(l.text) || "â™ª"}</p>`).join("");
   box.scrollTop = 0;
 }
 
@@ -1594,7 +1768,10 @@ function spUpdateActiveLine() {
     const box = spEl("sp-lyrics");
     if (box && SP.synced) {
       const lines = box.querySelectorAll(".sp-lyric-line");
-      lines.forEach((el, i) => el.classList.toggle("active", i === idx));
+      lines.forEach((el, i) => {
+        el.classList.toggle("active", i === idx);
+        el.classList.toggle("near-active", idx >= 0 && Math.abs(i - idx) === 1);
+      });
       const active = lines[idx];
       if (active) spScrollIntoView(box, active);
     }
@@ -1606,7 +1783,7 @@ function spScrollIntoView(box, el) {
   const boxRect = box.getBoundingClientRect();
   const elRect = el.getBoundingClientRect();
   const target = box.scrollTop + (elRect.top - boxRect.top) - box.clientHeight / 2 + elRect.height / 2;
-  box.scrollTo({ top: Math.max(0, target), behavior: "smooth" });
+  box.scrollTo({ top: Math.max(0, target), behavior: navMotionPreference.matches ? "instant" : "smooth" });
 }
 
 function spUpdateHomeCardLine(idx) {
@@ -1619,7 +1796,7 @@ function spUpdateHomeCardLine(idx) {
     text = next && next.text ? next.text : "now playing";
   } else {
     const line = SP.lyrics[idx];
-    text = (line && line.text) || "♪";
+    text = (line && line.text) || "â™ª";
   }
   if (text === SP.homeLine && el.textContent === text) return;
   SP.homeLine = text;
@@ -1631,6 +1808,7 @@ function openPlayer() {
   if (!root) return;
   SP.open = true;
   root.classList.add("open");
+  requestAnimationFrame(spUpdateTitleScroll);
   root.setAttribute("aria-hidden", "false");
   spRenderState();
   if (SP.active) {
@@ -1653,6 +1831,14 @@ function closePlayer() {
 function spInit() {
   const root = spEl("player");
   if (!root) return;
+  const title = spEl("sp-title");
+  if (title) {
+    const observer = new ResizeObserver(spUpdateTitleScroll);
+    observer.observe(title);
+    const text = title.querySelector(".sp-title-text");
+    if (text) observer.observe(text);
+    if (document.fonts) document.fonts.ready.then(spUpdateTitleScroll);
+  }
   const close = root.querySelector("[data-player-close]");
   if (close) close.innerHTML = PLAYER_ICONS.close;
   root.querySelectorAll("[data-ic]").forEach((el) => {
@@ -1679,7 +1865,7 @@ function updateHomeLyric() {
     if (lines[i].t != null && lines[i].t <= pos + 0.05) idx = i;
     else break;
   }
-  el.textContent = (lines[idx] && lines[idx].text) || "♪";
+  el.textContent = (lines[idx] && lines[idx].text) || "â™ª";
 }
 
 async function startHomeLyrics(track) {
@@ -1732,7 +1918,7 @@ async function refreshNowPlaying() {
     art: lfImage(t),
     hue: hueFromString(t.name || ""),
     playing,
-    statusText: playing ? "now playing" : t.date && t.date.uts ? "last played · " + timeAgo(t.date.uts) : "last played",
+    statusText: playing ? "now playing" : t.date && t.date.uts ? "last played Â· " + timeAgo(t.date.uts) : "last played",
   };
   DATA._lastfmNowPlaying = np;
   if (SP.active) return;
