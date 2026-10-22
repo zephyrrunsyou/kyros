@@ -595,7 +595,7 @@ function pageHome() {
       </div>
       <p class="bio">${esc(p.bio)}</p>
       <div class="np-block">
-        <div class="np-card${np.playing ? " playing" : ""}">
+        <div class="np-card${np.playing ? " playing" : np.statusText === "paused" ? " paused" : ""}">
           <div class="np-left">
             <span class="np-art-wrap">
               <span class="np-disc"></span>
@@ -603,16 +603,16 @@ function pageHome() {
               <button class="expand-btn" type="button" aria-label="Open player" data-open-player>${ICONS.expand}</button>
             </span>
             <div class="np-meta">
-              <a class="np-title" href="${esc(np.url)}" target="_blank" rel="noopener noreferrer">${esc(np.title)}</a>
-              <p class="np-artist">${esc(np.artist)}</p>
+              <a class="np-title" title="${esc(np.title)}" href="${esc(np.url)}" target="_blank" rel="noopener noreferrer"><span class="np-text">${esc(np.title)}</span></a>
+              <p class="np-artist" title="${esc(np.artist)}"><span class="np-text">${esc(np.artist)}</span></p>
             </div>
           </div>
           <div class="np-right">
+            ${!np.playing && np.statusText !== "paused" ? `<span class="eq" aria-hidden="true">${bars(5)}</span>` : ""}
             ${
               np.playing
                 ? `<span class="np-lyric" id="np-lyric" title="${esc(np.statusText)}">now playing</span>`
-                : `<span class="eq" aria-hidden="true">${bars(5)}</span>
-                   <span class="np-status">${esc(np.statusText)}</span>`
+                : `<span class="np-status">${esc(np.statusText)}</span>`
             }
           </div>
         </div>
@@ -964,7 +964,7 @@ function setTab(tab) {
     a.setAttribute("aria-current", a.dataset.tab === tab ? "page" : "false");
   });
   viewport.scrollTop = 0;
-  document.title = "portfolio";
+  document.title = "kyros";
 }
 
 function go(tab) {
@@ -978,7 +978,29 @@ function go(tab) {
 }
 
 let clockTimer = null;
+let homeTextObserver = null;
+function initHomeTextScroll() {
+  if (homeTextObserver) homeTextObserver.disconnect();
+  const rows = document.querySelectorAll(".np-title, .np-artist");
+  homeTextObserver = new ResizeObserver(() => {
+    rows.forEach((row) => {
+      const text = row.querySelector(".np-text");
+      const distance = Math.max(0, text.scrollWidth - row.clientWidth);
+      const previous = Number(row.dataset.scrollDistance || 0);
+      if (Math.abs(distance - previous) < 1) return;
+      row.dataset.scrollDistance = distance;
+      row.style.setProperty("--np-scroll-distance", `${-distance}px`);
+      row.style.setProperty("--np-scroll-duration", `${Math.max(6, distance / 25 + 4)}s`);
+      row.classList.toggle("is-scrolling", distance > 1);
+    });
+  });
+  rows.forEach((row) => {
+    homeTextObserver.observe(row);
+    homeTextObserver.observe(row.querySelector(".np-text"));
+  });
+}
 function startClock() {
+  initHomeTextScroll();
   const tick = () => {
     const el = document.getElementById("clock");
     if (el) el.textContent = new Date().toLocaleTimeString("en-GB", { hour12: false });
@@ -1052,6 +1074,9 @@ const SP = {
   reconnectTimer: null,
   connected: false,
   active: false,
+  paused: false,
+  directUntil: 0,
+  directBusy: false,
   track: null,
   open: false,
   raf: null,
@@ -1083,6 +1108,25 @@ function spArtists(str) {
 function spStart() {
   spFetchRest();
   spConnect();
+  spFetchDirect();
+  setInterval(spFetchDirect, 5000);
+}
+
+async function spFetchDirect() {
+  if (SP.directBusy || document.hidden) return;
+  SP.directBusy = true;
+  try {
+    const res = await fetch("https://kyros-spotify.societynuisance.workers.dev/now-playing", { cache: "no-store" });
+    if (!res.ok) return;
+    const data = await res.json();
+    if (typeof data.active !== "boolean") return;
+    SP.directUntil = Date.now() + 20000;
+    if (!data.active) { spSetInactive(); return; }
+    spSetTrack({ id: data.id, title: data.title, artist: data.artist, album: data.album,
+      art: data.art, url: data.url, progress: data.progress, duration: data.duration,
+      observedAt: data.observedAt, direct: true }, !data.playing);
+  } catch (e) { }
+  finally { SP.directBusy = false; }
 }
 
 async function spFetchRest() {
@@ -1179,6 +1223,7 @@ function spStopHeartbeat() {
 function spApply(data) {
   if (!data) return;
   spApplyActivity(data);
+  if (Date.now() < SP.directUntil) return;
   const listening = !!data.listening_to_spotify && data.spotify && data.spotify.track_id;
   if (!listening) {
     spSetInactive();
@@ -1195,9 +1240,15 @@ function spApply(data) {
     start: Number(ts.start) || 0,
     end: Number(ts.end) || 0,
   };
+  spSetTrack(track, false);
+}
+
+function spSetTrack(track, paused) {
   const changed = !SP.track || SP.track.id !== track.id;
+  const stateChanged = SP.paused !== paused;
   SP.track = track;
   SP.active = true;
+  SP.paused = paused;
 
   if (changed) {
     SP.lineIndex = -2;
@@ -1205,9 +1256,9 @@ function spApply(data) {
     SP.synced = false;
     SP.lyricsStatus = "loading";
     spRenderTrack(track);
-    spSyncCards(track);
     spLoadLyrics(track);
   }
+  if (changed || stateChanged) spSyncCards(track);
   spRenderState();
   spUpdateProgress();
   spUpdateActiveLine();
@@ -1217,6 +1268,7 @@ function spApply(data) {
 function spSetInactive() {
   const wasActive = SP.active;
   SP.active = false;
+  SP.paused = false;
   SP.track = null;
   spStopLoop();
   if (wasActive) {
@@ -1230,6 +1282,11 @@ function spSetInactive() {
 
 function spPosition() {
   const t = SP.track;
+  if (t && t.direct) {
+    const dur = Math.max(0, t.duration || 0);
+    const advance = SP.paused ? 0 : Math.max(0, Date.now() - t.observedAt);
+    return { pos: Math.min(dur, Math.max(0, (t.progress || 0) + advance)), dur };
+  }
   if (!t || !t.start || !t.end) return { pos: 0, dur: 0 };
   const dur = Math.max(0, t.end - t.start);
   const pos = Math.min(Math.max(0, Date.now() - t.start), dur);
@@ -1238,7 +1295,7 @@ function spPosition() {
 
 function spSetLoop() {
   spStopLoop();
-  if (!SP.active) return;
+  if (!SP.active || SP.paused) return;
   if (SP.open) {
     const step = () => {
       SP.raf = null;
@@ -1288,6 +1345,13 @@ function spRenderState() {
   const root = spEl("player");
   if (!root) return;
   root.classList.toggle("is-active", SP.active);
+  root.classList.toggle("is-paused", SP.paused);
+  const status = spEl("sp-status");
+  if (status) status.textContent = SP.active ? (SP.paused ? "paused" : "now playing") : "";
+  const playbackIcon = root.querySelector(".sp-ic-main");
+  if (playbackIcon) playbackIcon.innerHTML = SP.paused
+    ? '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4v16l14-8Z"/></svg>'
+    : PLAYER_ICONS.pause;
   const stage = spEl("sp-stage");
   const inactive = spEl("sp-inactive");
   if (stage) stage.hidden = !SP.active;
@@ -1309,22 +1373,25 @@ function spSyncCards(track) {
     DATA.nowPlaying = {
       title: track.title,
       artist: track.artist,
-      url: "#",
+      url: track.url || "#",
       art: track.art,
       hue: hueFromString(track.title || ""),
-      playing: true,
-      statusText: "now playing",
+      playing: !SP.paused,
+      statusText: SP.paused ? "paused" : "now playing",
     };
-    const key = "sp:" + track.id;
+    const key = "sp:" + track.id + ":" + SP.paused;
     if (key === SP.cardKey) return;
     SP.cardKey = key;
     stopHomeLyrics();
     renderPage("home");
+    SP.homeLine = "";
     renderPage("music");
     hydrateCovers(document);
   } else if (SP.cardKey) {
     SP.cardKey = "";
-    if (DATA._lastfmNowPlaying) DATA.nowPlaying = DATA._lastfmNowPlaying;
+    if (DATA._lastfmNowPlaying) DATA.nowPlaying = Date.now() < SP.directUntil
+      ? { ...DATA._lastfmNowPlaying, playing: false, statusText: "not listening right now" }
+      : DATA._lastfmNowPlaying;
     renderPage("home");
     renderPage("music");
     hydrateCovers(document);
@@ -1492,7 +1559,7 @@ function spUpdateHomeCardLine(idx) {
     const line = SP.lyrics[idx];
     text = (line && line.text) || "♪";
   }
-  if (text === SP.homeLine) return;
+  if (text === SP.homeLine && el.textContent === text) return;
   SP.homeLine = text;
   el.textContent = text;
 }
@@ -1585,7 +1652,7 @@ function nowPlayingKey(t) {
 let npKey = "";
 
 async function refreshNowPlaying() {
-  if (SP.active) return;
+  if (SP.active || Date.now() < SP.directUntil) return;
   let recent;
   try {
     recent = await lastfm("user.getrecenttracks", { limit: 1 });
