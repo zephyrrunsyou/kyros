@@ -1452,6 +1452,13 @@ a { color: inherit; }
   filter: blur(0);
   transform: scale(1.025);
 }
+.sp-lyric-word { white-space: pre-wrap; transition: color .12s ease, text-shadow .12s ease; }
+.sp-lyric-line.active.has-word-timing .sp-lyric-word { color: rgb(255 255 255 / .42); }
+.sp-lyric-line.active.has-word-timing .word-sung { color: rgb(255 255 255 / .82); }
+.sp-lyric-line.active.has-word-timing .word-active { color: #fff; text-shadow: 0 0 18px rgb(255 255 255 / .3); }
+@media (prefers-reduced-motion: reduce) {
+  .sp-lyric-word { transition: none; }
+}
 .sp-lyrics-note {
   margin: 0;
   font-size: clamp(15px, 1.8vw, 19px);
