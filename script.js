@@ -1262,11 +1262,13 @@ async function spFetchDirect() {
     if (!res.ok) return;
     const data = await res.json();
     if (typeof data.active !== "boolean") return;
+    const snapshotAge = Number.isFinite(data.servedAt) && Number.isFinite(data.observedAt)
+      ? Math.max(0, data.servedAt - data.observedAt) : 0;
     SP.directUntil = Date.now() + 20000;
     if (!data.active) { spSetInactive(); return; }
     spSetTrack({ id: data.id, title: data.title, artist: data.artist, album: data.album,
-      art: data.art, url: data.url, progress: data.progress, duration: data.duration,
-      observedAt: data.observedAt, direct: true }, !data.playing);
+      art: data.art, url: data.url, progress: data.progress + (data.playing ? snapshotAge : 0), duration: data.duration,
+      observedAt: Date.now(), receivedAt: performance.now(), direct: true }, !data.playing);
   } catch (e) { }
   finally { SP.directBusy = false; }
 }
@@ -1426,7 +1428,8 @@ function spPosition() {
   const t = SP.track;
   if (t && t.direct) {
     const dur = Math.max(0, t.duration || 0);
-    const advance = SP.paused ? 0 : Math.max(0, Date.now() - t.observedAt);
+    const elapsed = Number.isFinite(t.receivedAt) ? performance.now() - t.receivedAt : Date.now() - t.observedAt;
+    const advance = SP.paused ? 0 : Math.max(0, elapsed);
     return { pos: Math.min(dur, Math.max(0, (t.progress || 0) + advance)), dur };
   }
   if (!t || !t.start || !t.end) return { pos: 0, dur: 0 };
@@ -1450,7 +1453,7 @@ function spSetLoop() {
   } else {
     SP.tickTimer = setInterval(() => {
       if (SP.active) spUpdateActiveLine();
-    }, 1000);
+    }, 100);
   }
 }
 
@@ -1695,13 +1698,22 @@ async function spFetchLyrics(track) {
     if (res.ok) {
       const arr = await res.json();
       if (Array.isArray(arr) && arr.length) {
-        const best = arr.find((x) => x.hasWordSync && x.lyricsfile) || arr.find((x) => x.syncedLyrics) || arr.find((x) => x.plainLyrics) || arr[0];
+        const best = spChooseLyricsRecord(arr, track, dur);
         const parsed = spParseResult(best);
         if (parsed) return parsed;
       }
     }
   } catch (e) { }
   return null;
+}
+
+function spChooseLyricsRecord(records, track, duration) {
+  const normalize = value => String(value || "").normalize("NFKC").toLowerCase().replace(/[^\p{L}\p{N}]/gu, "");
+  const matches = records.filter(record => normalize(record.trackName || record.name) === normalize(track.title)
+    && normalize(record.artistName) === normalize(track.artist)
+    && (!duration || (Number.isFinite(record.duration) && Math.abs(record.duration - duration) <= 2)));
+  return matches.find(record => record.hasWordSync && record.lyricsfile)
+    || matches.find(record => record.syncedLyrics) || matches.find(record => record.plainLyrics) || matches[0];
 }
 
 function spParseResult(j) {
@@ -1787,7 +1799,7 @@ function spUpdateActiveLine() {
     const { pos } = spPosition();
     const t = pos / 1000;
     for (let i = 0; i < SP.lyrics.length; i++) {
-      if (SP.lyrics[i].t <= t + 0.05) idx = i;
+      if (SP.lyrics[i].t <= t) idx = i;
       else break;
     }
   }
@@ -1832,17 +1844,25 @@ function spUpdateHomeCardLine(idx) {
   if (!SP.active) return;
   const el = spEl("np-lyric");
   if (!el) return;
-  let text;
-  if (!SP.synced || idx < 0) {
-    const next = SP.lyrics[0];
-    text = next && next.text ? next.text : "now playing";
-  } else {
-    const line = SP.lyrics[idx];
-    text = (line && line.text) || "♪";
+  const line = SP.synced && idx >= 0 ? SP.lyrics[idx] : null;
+  const text = line ? line.text || "♪" : "now playing";
+  const timed = !!(line && line.words && line.words.length);
+  const key = `${idx}:${timed}:${text}`;
+  if (el.dataset.lyricKey !== key) {
+    el.dataset.lyricKey = key;
+    el.classList.toggle("has-word-timing", timed);
+    if (timed) el.innerHTML = line.words.map(word => `<span class="np-lyric-word">${esc(word.text)}</span>`).join("");
+    else el.textContent = text;
   }
-  if (text === SP.homeLine && el.textContent === text) return;
   SP.homeLine = text;
-  el.textContent = text;
+  if (timed) {
+    const time = spPosition().pos / 1000;
+    const activeWord = spWordIndex(line, time);
+    el.querySelectorAll(".np-lyric-word").forEach((word, i) => {
+      word.classList.toggle("word-active", i === activeWord);
+      word.classList.toggle("word-sung", line.words[i].t <= time);
+    });
+  }
 }
 
 function openPlayer() {
@@ -1911,19 +1931,12 @@ function updateHomeLyric() {
 }
 
 async function startHomeLyrics(track) {
-  const token = ++homeLyrics.token;
-  homeLyrics.lines = [];
-  homeLyrics.startAt = Date.now();
-  updateHomeLyric();
-  let result = null;
-  try {
-    result = await spFetchLyrics(track);
-  } catch (e) { }
-  if (token !== homeLyrics.token) return;
-  homeLyrics.lines = result && result.synced ? result.synced : [];
-  updateHomeLyric();
-  if (homeLyrics.timer) clearInterval(homeLyrics.timer);
-  homeLyrics.timer = setInterval(updateHomeLyric, 1000);
+  // Last.fm supplies a listening flag, not a playback position. Do not start a
+  // second lyrics clock from page load; Spotify/Discord handle timed lyrics.
+  stopHomeLyrics();
+  if (SP.active) return;
+  const el = document.getElementById("np-lyric");
+  if (el) el.textContent = "now playing";
 }
 
 function stopHomeLyrics() {

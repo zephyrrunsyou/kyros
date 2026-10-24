@@ -38,3 +38,23 @@ test("last played separators are free of encoding corruption", () => {
   assert.ok(source.includes('"last played · "'));
   assert.ok(!source.includes("Â·"));
 });
+
+test("lyrics search rejects different versions and prefers word timings only among matching recordings", () => {
+  vm.runInContext(source.slice(source.indexOf("function spChooseLyricsRecord("), source.indexOf("function spParseResult(")), context);
+  const candidates = [
+    { trackName: "Example", artistName: "Artist", duration: 180, hasWordSync: true, lyricsfile: "wrong version" },
+    { trackName: "Example", artistName: "Artist", duration: 215, syncedLyrics: "correct" },
+    { trackName: "Example (Live)", artistName: "Artist", duration: 215, hasWordSync: true, lyricsfile: "live" },
+  ];
+  const selected = context.spChooseLyricsRecord(candidates, { title: "Example", artist: "Artist" }, 215);
+  assert.equal(selected.syncedLyrics, "correct");
+});
+
+test("local monotonic playback clock is unaffected by a remote clock offset", () => {
+  const SP = { paused: false, track: { direct: true, progress: 42000, duration: 180000, receivedAt: 1000, observedAt: 0 } };
+  const clockContext = vm.createContext({ SP, performance: { now: () => 2000 }, Date });
+  vm.runInContext(source.slice(source.indexOf("function spPosition()"), source.indexOf("function spSetLoop()")), clockContext);
+  assert.equal(clockContext.spPosition().pos, 43000);
+  SP.paused = true;
+  assert.equal(clockContext.spPosition().pos, 42000);
+});

@@ -128,7 +128,7 @@ export default {
           if (!pending) pending = readPlayback(env).then(data => { snapshot = data; snapshotUntil = Date.now() + 5000; }).finally(() => { pending = null; });
           await pending;
         }
-        return new Response(JSON.stringify(snapshot), { headers });
+        return new Response(JSON.stringify({ ...snapshot, servedAt: Date.now() }), { headers });
       } catch { return new Response(JSON.stringify({ error: "Playback unavailable" }), { status: 503, headers }); }
     }
     return page('<h1>kyros Spotify service</h1><p>Owner setup: <a href="/connect">connect Spotify</a>.</p>');
