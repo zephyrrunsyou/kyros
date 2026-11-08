@@ -3,7 +3,8 @@ const DATA = {
     name: "your name",
     handle: "@yourhandle",
     bio: "I'm a self-taught developer who enjoys making discord bots, websites, and other projects in my free time. coding is just a hobby of mine, but i enjoy learning new things and bringing my ideas to life.",
-    avatar: "",
+    avatar: "https://api.semetary.xyz/194416051348439040.png",
+    identityImage: "https://api.semetary.xyz/194416051348439040?transparency=100&hideTag=true&hideBadges=true&hideActivity=true&hideAvatar=true",
     hue: 265,
     status: "offline",
   },
@@ -494,7 +495,6 @@ async function loadDiscord() {
     const u = (data && data.discord_user) || {};
     DATA.profile.name = u.display_name || u.global_name || u.username || DATA.profile.name;
     DATA.profile.handle = u.username ? "@" + u.username : DATA.profile.handle;
-    DATA.profile.avatar = discordAvatar(u) || DATA.profile.avatar;
     DATA.profile.hue = hueFromString(u.username || DATA.profile.name);
     if (data && STATUS[data.discord_status]) DATA.profile.status = data.discord_status;
     spApply(data);
@@ -588,9 +588,12 @@ function pageHome() {
           ${p.avatar ? `<img class="avatar" src="${esc(p.avatar)}" alt="" onerror="this.remove()">` : ""}
           <span class="status">${statusIcon(p.status)}</span>
         </span>
-        <div style="min-width:0">
-          <h1>${esc(p.name)}</h1>
-          <p class="handle">${esc(p.handle)}</p>
+        <div class="profile-identity">
+          <img class="profile-identity-image" src="${esc(p.identityImage)}" alt="${esc(p.name)} ${esc(p.handle)}" onerror="this.hidden=true;this.nextElementSibling.hidden=false">
+          <div hidden>
+            <h1>${esc(p.name)}</h1>
+            <p class="handle">${esc(p.handle)}</p>
+          </div>
         </div>
       </div>
       <p class="bio">${esc(p.bio)}</p>
