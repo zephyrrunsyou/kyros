@@ -86,6 +86,24 @@ async function readPlayback(env) {
 export default {
   async fetch(request, env) {
     const url = new URL(request.url);
+    if (url.pathname === "/semetary-stats") {
+      const headers = { "Access-Control-Allow-Origin": SITE };
+      if (request.method !== "GET") return new Response(null, { status: 405, headers });
+      try {
+        const res = await fetch("https://stats.semetary.xyz/api/bot", { signal: AbortSignal.timeout(5000) });
+        if (!res.ok) throw new Error("Stats unavailable");
+        const data = await res.json();
+        const count = value => Number.isSafeInteger(value) && value >= 0 ? value : null;
+        const ping = data.totals?.avgPing;
+        return Response.json({
+          users: count(data.totals?.users), servers: count(data.totals?.guilds),
+          shards: count(data.shardCount), clusters: count(data.clusterCount),
+          latency: Number.isFinite(ping) && ping >= 0 ? ping : null,
+        }, { headers: { ...headers, "Cache-Control": "public, max-age=30" } });
+      } catch {
+        return Response.json({ error: "Semetary stats unavailable" }, { status: 502, headers });
+      }
+    }
     if (!env.SPOTIFY_CLIENT_SECRET || !env.SETUP_PASSWORD || !env.SPOTIFY_KV) {
       return page("<h1>Finish Worker setup</h1><p>Add the SPOTIFY_CLIENT_SECRET and SETUP_PASSWORD secrets and the SPOTIFY_KV binding in Cloudflare.</p>", 503);
     }

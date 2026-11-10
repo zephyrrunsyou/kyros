@@ -101,19 +101,19 @@ const DATA = {
       name: "semetary",
       url: "https://semetary.xyz",
       years: "2026",
-      metric: "20.8k",
+      metric: "—",
       metricLabel: "Users",
       image: "images/semetary.png",
       hue: 330,
       description: "Semetary is a feature-rich Discord bot built to help communities of all sizes with moderation, automation, music, utilities, and powerful server management tools.",
       stats: [
-        { value: "16", label: "servers" },
-        { value: "20.8k", label: "Users" },
+        { value: "—", label: "Servers" },
+        { value: "—", label: "Users" },
       ],
       moreStats: [
-        { value: "2", label: "shards" },
-        { value: "1", label: "cluster" },
-        { value: "13ms", label: "avg latency" },
+        { value: "—", label: "Shards" },
+        { value: "1", label: "Clusters" },
+        { value: "—", label: "Avg latency" },
         { value: "900+", label: "commands" },
       ],
       tech: ["docker", "typescript", "discord", "discordeno", "bun"],
@@ -1034,6 +1034,29 @@ function setTab(tab) {
   });
   viewport.scrollTop = 0;
   document.title = "kyros";
+  if (tab === "projects") refreshSemetaryStats();
+}
+
+let semetaryRefreshAt = 0;
+async function refreshSemetaryStats() {
+  if (Date.now() < semetaryRefreshAt) return;
+  semetaryRefreshAt = Date.now() + 60_000;
+  try {
+    const response = await fetch("https://kyros-spotify.societynuisance.workers.dev/semetary-stats", { signal: AbortSignal.timeout(7000) });
+    if (!response.ok) throw new Error("Stats unavailable");
+    const data = await response.json();
+    const project = DATA.projects.find(p => p.name === "semetary");
+    const count = n => Number.isSafeInteger(n) && n >= 0 ? n.toLocaleString("en-US") : "—";
+    const values = { Servers: count(data.servers), Users: count(data.users), Shards: count(data.shards), Clusters: count(data.clusters ?? 1),
+      "Avg latency": Number.isFinite(data.latency) && data.latency >= 0 ? `${Math.round(data.latency)}ms` : "—" };
+    for (const stat of [...project.stats, ...project.moreStats]) {
+      if (Object.hasOwn(values, stat.label)) stat.value = values[stat.label];
+    }
+    project.metric = values.Users;
+    renderPage("projects");
+  } catch {
+    semetaryRefreshAt = Date.now() + 15_000;
+  }
 }
 
 const navAnimations = new Map();
